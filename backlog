@@ -1,0 +1,7 @@
+Things to do that appears
+
+- Better server teams object.
+    - Better data structure for the initial characters
+
+- rework net system so it is not dependent on the entity indices in the world container
+    - create a network id component

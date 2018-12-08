@@ -202,7 +202,7 @@ public class ClientNetworkInSys implements Sys{
             AudioComp dmgerAudioComp = (AudioComp) wc.getComponent(entityDamager, AudioComp.class);
 
             if (dmgerAudioComp.hasSound(0)) {
-                dmgerAudioComp.playSound(0);
+                dmgerAudioComp.requestSound(0);
             }
         }
     }

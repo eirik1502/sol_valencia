@@ -5,6 +5,8 @@ import engine.Sys;
 import engine.WorldContainer;
 import javafx.geometry.Pos;
 
+import java.util.List;
+
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcDestroyContext;
@@ -25,15 +27,15 @@ public class AudioSys implements Sys {
     @Override
     public void update() {
         wc.entitiesOfComponentTypeStream(AudioComp.class).forEach(entity-> {
-            AudioComp ac = (AudioComp) wc.getComponent(entity, AudioComp.class);
-            PositionComp posComp = (PositionComp) wc.getComponent(entity, PositionComp.class);
+            AudioComp ac = wc.getComponent(entity, AudioComp.class);
+            PositionComp posComp = wc.getComponent(entity, PositionComp.class);
 
             if (!ac.backgroundAudio){
                 ac.setPosition(posComp.getPos3());
             }
 
-            if (ac.requestSound!=-1){
-                ac.playSound(ac.requestSound);
+            if (ac.getRequestSoundIndex() != -1){
+                playSource(ac);
             }
 
             if (ac.requestStopSource){
@@ -41,7 +43,7 @@ public class AudioSys implements Sys {
             }
 
             //resetting so sound does not play repeatedly
-            ac.requestSound = -1;
+            ac.setRequestSoundIndex(-1);
         });
 
         wc.entitiesOfComponentTypeStream(SoundListenerComp.class).forEach(entity-> {
@@ -50,6 +52,24 @@ public class AudioSys implements Sys {
         });
     }
 
+
+    private void playSource(AudioComp audioComp){
+        int reqSoundIndex = audioComp.getRequestSoundIndex();
+        List<Sound> sounds = audioComp.soundList;
+
+        //check if requested sound is valid
+        if (reqSoundIndex < 0 || reqSoundIndex >= sounds.size()) {
+            System.err.println("Trying to play a sound by invalid index");
+            return;
+        }
+
+        Sound sound = sounds.get(reqSoundIndex);
+        int sourcePointer = audioComp.sourcePointer;
+
+        alSourceStop(sourcePointer);
+        alSourcei(sourcePointer, AL_BUFFER, sound.getBufferPointer());
+        alSourcePlay(sourcePointer);
+    }
 
     @Override
     public void terminate() {

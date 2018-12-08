@@ -53,9 +53,11 @@ public class AudioMaster{
         ALCapabilities contextCaps = AL.createCapabilities(deviceCaps);
 
 
-        printALCInfo(device, deviceCaps);
-        printALInfo();
+        //printALCInfo(device, deviceCaps);
+        //printALInfo();
 
+        checkALCError(device);
+        checkALError();
     }
 
 
@@ -88,7 +90,7 @@ public class AudioMaster{
 
         System.out.println("ALC extensions:");
         String[] extensions = alcGetString(device, ALC_EXTENSIONS).split(" ");
-        checkALCError(device);
+
         for (String extension : extensions) {
             if (extension.trim().isEmpty()) {
                 continue;
@@ -109,7 +111,6 @@ public class AudioMaster{
             }
             System.out.println("    " + extension);
         }
-        checkALError();
     }
 
 

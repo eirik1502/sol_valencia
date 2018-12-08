@@ -158,7 +158,7 @@ public class Window {
 
         glfwMakeContextCurrent(windowId);
 
-        glfwSwapInterval(1);// Enable v-sync
+        //glfwSwapInterval(1);// Enable v-sync
 
         GL.createCapabilities(); //get opengl context
 

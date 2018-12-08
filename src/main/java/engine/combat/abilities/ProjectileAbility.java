@@ -20,11 +20,11 @@ public class ProjectileAbility extends Ability {
 
     private final float startDistance = 64f;
 
-    private int projEntity;
-
     private float projStartSpeed;
     private int projLifeTime;
     private float knockbackAngle;
+
+    private int projEntity;
 
 
 
@@ -52,14 +52,14 @@ public class ProjectileAbility extends Ability {
     void startEffect(WorldContainer wc, int requestingEntity) {
         wc.activateEntity(projEntity);
 
-        PositionComp reqPosComp = (PositionComp)wc.getComponent(requestingEntity, PositionComp.class);
-        RotationComp reqRotComp = (RotationComp)wc.getComponent(requestingEntity, RotationComp.class);
+        PositionComp reqPosComp = wc.getComponent(requestingEntity, PositionComp.class);
+        RotationComp reqRotComp = wc.getComponent(requestingEntity, RotationComp.class);
 
-        PositionComp projPosComp = (PositionComp)wc.getComponent(projEntity, PositionComp.class);
-        RotationComp projRotComp = (RotationComp)wc.getComponent(projEntity, RotationComp.class);
-        PhysicsComp projPhysComp = (PhysicsComp)wc.getComponent(projEntity, PhysicsComp.class);
-        HitboxComp projHitbComp = (HitboxComp) wc.getComponent(projEntity, HitboxComp.class);
-        ProjectileComp projProjComp = (ProjectileComp)wc.getComponent(projEntity, ProjectileComp.class);
+        PositionComp projPosComp = wc.getComponent(projEntity, PositionComp.class);
+        RotationComp projRotComp = wc.getComponent(projEntity, RotationComp.class);
+        PhysicsComp projPhysComp = wc.getComponent(projEntity, PhysicsComp.class);
+        HitboxComp projHitbComp = wc.getComponent(projEntity, HitboxComp.class);
+        ProjectileComp projProjComp = wc.getComponent(projEntity, ProjectileComp.class);
 
 
         //set abilityId in projectile entity

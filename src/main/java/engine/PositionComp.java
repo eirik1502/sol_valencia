@@ -11,6 +11,9 @@ public class PositionComp implements Component {
     private float x, y, z;
 
 
+    public PositionComp() {
+        this(0,0);
+    }
     public PositionComp(float x, float y, float z) {
         setX(x);
         setY(y);
@@ -70,6 +73,6 @@ public class PositionComp implements Component {
 
     @Override
     public String toString() {
-        return "x="+x+" y="+y;
+        return "{PositionComp: [x="+x+" y="+y+"]}";
     }
 }

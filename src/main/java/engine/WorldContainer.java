@@ -3,6 +3,8 @@ package engine;
 
 import java.util.*;
 import java.util.stream.Stream;
+
+import com.google.gson.Gson;
 import engine.graphics.view_.View;
 import game.GameUtils;
 
@@ -294,14 +296,15 @@ public class WorldContainer {
         return inactiveComponents.get(compType);
     }
 
-    public Component getComponent(int entity, Class<? extends Component> compType) {
+    @SuppressWarnings("unchecked")
+    public <T extends Component> T getComponent(int entity, Class<T> compType) {
         Component c = getComponentsOfType(compType).get(entity);
-        if (c == null) throw new IllegalStateException("No component of the given type is assigned to the given entity, type="+compType+ " entity number=" + entity);
-        return c;
+        if (c == null) throw new IllegalStateException("No component of the given type is assigned to the given entity,\ncompType="+compType+ " entity=" + entityNames.get(entity) +" entity number=" + entity);
+        return (T)c;
     }
-    public <T extends Component> T getComponent(int entity, Class<? extends Component> compType, boolean b) {
-        return (T) getComponent(entity, compType);
-    }
+//    public <T extends Component> T getComponent(int entity, Class<? extends Component> compType, boolean b) {
+//        return (T) getComponent(entity, compType);
+//    }
     public Component getInactiveComponent(int entity, Class<? extends Component> compType) {
         Component c = getInactiveComponentsOfType(compType).get(entity);
         if (c == null) throw new IllegalStateException("No component of the given type is assigned to the given entity, type="+compType);
@@ -341,13 +344,19 @@ public class WorldContainer {
 
     public String componentToString(int entity, Class<? extends Component> compType) {
         String compTypeName = compType.getSimpleName();
+
+        //Get comp by reflection:
+        Gson defaultGson = new Gson();
+
         if (hasComponent(entity, compType)) {
             //If comp is active
-            return "\t\t" + String.format("%-30s",compTypeName) + "instance: " + getComponent(entity, compType) + "\n";
+            String compStr = defaultGson.toJson(getComponent(entity, compType));
+            return "\t\t" + String.format("%-30s",compTypeName) + "instance: " + compStr + "\n";
         }
         else {
             //if com is inactive
-            return "\t\t/inactive/ " + String.format("%-30s",compTypeName) + "instance: " + getInactiveComponent(entity, compType) + "\n";
+            String inactiveCompString = defaultGson.toJson(getInactiveComponent(entity, compType));
+            return "\t\t/inactive/ " + String.format("%-30s",compTypeName) + "instance: " + inactiveCompString + "\n";
         }
     }
     public String entityToString(int entity) {

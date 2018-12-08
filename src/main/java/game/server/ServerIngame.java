@@ -15,6 +15,7 @@ import engine.window.Window;
 import game.CharacterUtils;
 import game.GameUtils;
 import game.SysUtils;
+import utils.loggers.Logger;
 
 import java.util.*;
 
@@ -31,8 +32,9 @@ public class ServerIngame {
     public static final float WINDOW_WIDTH = GameUtils.SMALL_MAP_WIDTH /4,
                                 WINDOW_HEIGHT = GameUtils.SMALL_MAP_WIDTH /4;
 
+    public Logger logger = new Logger("server_ingame");
 
-//    private ServerCharacterSelection charactersSelected;
+    //    private ServerCharacterSelection charactersSelected;
 
     private ServerGame serverGame;
 
@@ -57,62 +59,82 @@ public class ServerIngame {
     public int gameDataEntity;
 
 
+    private boolean displayWindow;
+
+
     public ServerIngame() {
+        this(false);
+    }
+    public ServerIngame(boolean displayWindow) {
+        this.displayWindow = displayWindow;
 
     }
 
 
     public void init( ServerGame serverGame, ServerGameTeams teams) {
+        logger.printh1("init");
         this.serverGame = serverGame;
         this.teams = teams;
 
         //are we on small map?
         smallMap = teams.getTotalClientCount() <= 2;
+        logger.println("map = " + (smallMap? "small map" : "large map") );
 
 
         //add an stockLoss entry for every client
         stockLossCount = new int[teams.getTotalClientCount()];
+
+        //make utils log to our logger
+        GameUtils.logger = logger;
     }
 
 
     public void start() {
+        logger.printh1("start");
 
-        this.window = new Window(0.3f, "Server ingame");
-        this.userInput = new UserInput(window, 1, 1);
+        if (displayWindow) {
+            logger.println("create window");
+            this.window = new Window(0.3f, "Server ingame");
+            logger.println("create user input");
+            this.userInput = new UserInput(window, 1, 1);
 
+            //load other stuff
+            logger.println("load fonts");
+            Font.loadFonts(FontType.BROADWAY);
+            logger.println("init audio master");
+            AudioMaster.init();
+        }
+
+        logger.println("create world container");
         wc = new WorldContainer(new View(GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT) );
 
-        //load other stuff
-        Font.loadFonts(FontType.BROADWAY);
-        AudioMaster.init();
-
-
         GameUtils.assignComponentTypes(wc);
-        SysUtils.addServerSystems(wc, window, Arrays.asList( teams.getAllClients() ) );
 
-
-
+        logger.println("add server systems");
+        SysUtils.addServerSystems(wc, displayWindow? window : null, Arrays.asList( teams.getAllClients() ) );
 
         //create entities
         //create map
+        logger.println("create map");
         if (smallMap) {
-            GameUtils.createMap(wc);
+            GameUtils.createMap(wc, displayWindow);
         }
         else {
-            GameUtils.createLargeMap(wc);
+            GameUtils.createLargeMap(wc, displayWindow);
         }
 
-
-        CharacterUtils.createServerCharacters(wc, teams);
+        logger.println("create server characters");
+        CharacterUtils.createServerCharacters(wc, teams, displayWindow);
 
 
         //add a gameData entity
         gameDataEntity = wc.createEntity("game data");
         wc.addComponent(gameDataEntity, new ServerGameDataComp());
 
-        System.out.println("Server game initiated with clients: "+ Arrays.toString(teams.getAllClients()) );
+        logger.println("Server game initiated with clients: "+ Arrays.toString(teams.getAllClients()) );
 
-
+        logger.println(wc.entitiesToString());
+        System.out.println(wc.entitiesToString());
 
         //game loop
         lastTime = System.nanoTime();
@@ -129,10 +151,6 @@ public class ServerIngame {
                 update();
             }
 
-
-            if (window.shouldClosed() || userInput.isKeyboardPressed(UserInput.KEY_ESCAPE)) {
-                serverGame.setShouldTerminate();
-            }
         }
 
         onTerminate();
@@ -141,7 +159,13 @@ public class ServerIngame {
 
     public void update() {
 
-        window.pollEvents();
+        if (displayWindow && window != null) {
+            if (window.shouldClosed() || userInput.isKeyboardPressed(UserInput.KEY_ESCAPE)) {
+                serverGame.setShouldTerminate();
+            }
+
+            window.pollEvents();
+        }
 
         wc.updateSystems();
 
@@ -151,9 +175,12 @@ public class ServerIngame {
         //if so, ask to terminate game
         Arrays.stream(teams.getAllClients()).forEach( client -> {
             if (client.getTcpPacketIn().isRemoteSocketClosed()) {
+                logger.println("a client disconnected");
+                logger.println("requesting server termination");
                 serverGame.setShouldTerminate();
             }
         });
+
     }
 
     private void handleWinCondition() {
@@ -234,7 +261,8 @@ public class ServerIngame {
     private void onTerminate() {
         wc.terminate();
 
-        window.close();
+        if (window != null)
+            window.close();
     }
 
 

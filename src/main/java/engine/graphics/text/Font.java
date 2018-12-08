@@ -48,7 +48,7 @@ public class Font {
         this.lineHeight = lineHeight;
         this.fontSize = fontSize;
 
-        System.out.println(charData.keySet());
+        //System.out.println(charData.keySet());
         //System.out.println("Line height="+lineHeight);
     }
 

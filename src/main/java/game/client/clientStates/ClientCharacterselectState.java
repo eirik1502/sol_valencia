@@ -9,6 +9,7 @@ import engine.graphics.text.TextMesh;
 import engine.network.NetworkDataOutput;
 import engine.network.NetworkPregamePackets;
 import engine.network.client.ClientUtils;
+import game.LoadImageData;
 import game.client.Client;
 import engine.network.client.ClientState;
 import engine.network.client.ClientStates;
@@ -195,7 +196,9 @@ public class ClientCharacterselectState extends ClientState {
             //create character icons
             int charIconEntity = wc.createEntity("character icon");
             wc.addComponent(charIconEntity, new PositionComp(x, y));
-            CharacterUtils.addCharacterGraphicsComps(wc, 1, i, charIconEntity);
+
+            LoadImageData imageData = CharacterUtils.loadCharData[i][1];
+            CharacterUtils.addCharacterGraphicsComps(wc, charIconEntity, imageData);
 
             characterIconEntities[i] = charIconEntity;
         }

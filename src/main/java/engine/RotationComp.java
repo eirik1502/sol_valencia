@@ -1,5 +1,6 @@
 package engine;
 
+import com.google.gson.Gson;
 import utils.maths.TrigUtils;
 
 /**
@@ -29,4 +30,5 @@ public class RotationComp implements Component {
     public void addAngle(float angle) {
         setAngle(this.angle + angle);
     }
+
 }

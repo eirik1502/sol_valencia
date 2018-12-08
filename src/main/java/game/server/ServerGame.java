@@ -38,6 +38,14 @@ public class ServerGame implements Runnable {
     private boolean selectingCharacter = true;
     private int waitingClientsIngame = -1;
 
+    private boolean displayWindow;
+
+    public ServerGame() {
+        this(false);
+    }
+    public ServerGame(boolean displayWindow) {
+        this.displayWindow = displayWindow;
+    }
 
     public void init( ServerGameTeams teams ) {
 
@@ -154,7 +162,7 @@ public class ServerGame implements Runnable {
     private void initGame() {
         //init game
         System.out.println("Initializing inGame, waiting for clients");
-        serverIngame = new ServerIngame();
+        serverIngame = new ServerIngame(displayWindow);
         serverIngame.init(this, teams);
 
         //tell clients to go to ingame

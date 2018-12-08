@@ -11,21 +11,22 @@ import game.GameUtils;
  */
 public abstract class Ability {
 
+
     private int abilityId;
 
+    //stats - duration
     private int startupTime;
     private int effectTime;
     private int endlagTime;
     private int rechargeTime;
 
+    //media
     private int startEffectSoundIndex = -1;
 
 
-
+    //runtime
     private boolean recharging = false;
-
     private boolean requestExecution;
-
     public int counter;
 
 

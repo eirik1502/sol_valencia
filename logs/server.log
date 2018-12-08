@@ -1,0 +1,20 @@
+Log created at: 08.12.18_20:27:41
+constructed
+
+--- INIT SERVER ---
+
+creating world container
+initing world container
+creating initial entities
+creating connection listener
+
+--- SERVER STARTING ---
+
+
+--- SERVER TERMINATING ---
+
+terminate running games
+terminating world container
+terminating connection listener
+joining connection listen thread
+BYE BYE

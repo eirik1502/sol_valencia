@@ -19,6 +19,7 @@ import game.CharacterUtils;
 import game.ClientGameTeams;
 import game.GameUtils;
 import game.SysUtils;
+import utils.loggers.Logger;
 
 /**
  * Created by eirik on 22.06.2017.
@@ -32,6 +33,8 @@ public class ClientIngame implements Runnable{
     private long lastTime;
     private boolean running = true;
 
+
+    public Logger logger = new Logger("client", true);
 
 
     private TcpPacketInput tcpPacketIn;
@@ -49,17 +52,27 @@ public class ClientIngame implements Runnable{
 
     private ClientGameTeams teams;
 
+    private float relWindowSize = -1;
 
+    //must be true as of now
+    private boolean displayWindow = true;
 
     public ClientIngame() {
     }
+    public ClientIngame(float relWindowSize) {
+        this.relWindowSize = relWindowSize;
+    }
 
     public void init(TcpPacketInput tcpPacketIn, TcpPacketOutput tcpPacketOut, ClientGameTeams teams) {
+        logger.printh1("init");
+
+        logger.println("getting tcp in and out");
         this.tcpPacketIn = tcpPacketIn;
         this.tcpPacketOut = tcpPacketOut;
 
         this.teams = teams;
 
+        logger.println("creating world container");
         wc = new WorldContainer( new View(GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT) );
 
         System.out.println("HEELLLLLOOOOO");
@@ -75,6 +88,7 @@ public class ClientIngame implements Runnable{
     }
     public synchronized void setShouldTerminate() {
 //        VisualEffectSys.removeAllEffects();
+        logger.println("setting should terminate");
         shouldTerminate = true;
     }
 
@@ -83,33 +97,42 @@ public class ClientIngame implements Runnable{
      */
     @Override
     public void run() {
+        logger.printh1("run");
+        String title = "Client    Siiiii";
 
-        window = new Window("Client    Siiiii");
+        logger.println("creating window");
+        window = relWindowSize == -1? new Window(title) : new Window(relWindowSize, title);
+
+        logger.println("creating user input");
         userInput = new UserInput(window, GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT);
 
         //make sure window has focus
         window.focus();
 
         //load stuff
+        logger.println("loading fonts");
         Font.loadFonts(FontType.BROADWAY);
+        logger.println("initing audio master");
         AudioMaster.init();
 
-
-
+        logger.println("assigning component types");
         GameUtils.assignComponentTypes(wc);
 
+        logger.println("creating map entities");
         //create map
         if (teams.getTotalCharacterCount() <= 2) {
-            GameUtils.createMap(wc);
+            GameUtils.createMap(wc, displayWindow);
         }
         else if (teams.getTotalCharacterCount() <= 4) {
-            GameUtils.createLargeMap(wc);
+            GameUtils.createLargeMap(wc, displayWindow);
         }
         else {
             throw new IllegalStateException("Dont know what map to use for " + teams.getTotalCharacterCount() + " clients");
         }
 
-        int[][] charEntIds = CharacterUtils.createClientCharacters(wc, teams);
+        logger.println("creating client characters");
+        int[][] charEntIds = CharacterUtils.createClientCharacters(wc, teams, displayWindow);
+        logger.println("creating game data entity");
         GameUtils.createGameData(wc, teams, charEntIds);
 
 
@@ -117,6 +140,7 @@ public class ClientIngame implements Runnable{
 //
 //        GameUtils.createGameData(wc, teams, charEntIds);
 
+        logger.println("adding client systems");
         //do this afte rbecaus of onscreen sys wich creates entities..
         SysUtils.addClientSystems(wc, window, userInput, tcpPacketIn, tcpPacketOut);
 
@@ -145,9 +169,12 @@ public class ClientIngame implements Runnable{
 
 
             if (window.shouldClosed() || userInput.isKeyboardPressed(UserInput.KEY_ESCAPE)) {
+                logger.println("close game user input detected");
+
                 if (!gameOver) {
                     //tell server to disconnect us
                     //we have to disconnect when exiting in the midle of a game
+                    logger.println("sending host disconnected");
                     tcpPacketOut.sendHostDisconnected();
                 }
 
@@ -168,9 +195,11 @@ public class ClientIngame implements Runnable{
 
         //check if game is over
         wc.entitiesOfComponentTypeStream(GameDataComp.class).forEach(entity -> {
-            GameDataComp dataComp = (GameDataComp) wc.getComponent(entity, GameDataComp.class);
+            GameDataComp dataComp = wc.getComponent(entity, GameDataComp.class);
 
             if (dataComp.endGameRequest) {
+                logger.println("end game is requested by GameDataComp");
+                logger.println("ClientIngame requesting game over");
                 gameOver = true;
             }
         });
@@ -184,7 +213,12 @@ public class ClientIngame implements Runnable{
         if (tcpPacketIn.removeIfHasPacket(NetworkPregamePackets.GAME_SERVER_EXIT) ||
                 tcpPacketIn.isRemoteSocketClosed()) {
 
-            if (tcpPacketIn.isRemoteSocketClosed()) System.err.println("Remote socket is closed");
+            if (tcpPacketIn.isRemoteSocketClosed()) {
+                 System.err.println("Remote socket is closed");
+                 logger.println("remote socket was closed");
+            } else {
+                logger.println("recieved game exit from server");
+            }
 
             //dont go out of game if we are in end game state
             if (gameOver) return;
@@ -194,12 +228,16 @@ public class ClientIngame implements Runnable{
     }
 
     private void onTerminate() {
-
+        logger.printh1("on terminate");
 
         //terminate systems
+        logger.println("terminating world container");
         wc.terminate();
 
+        logger.println("closing window");
         window.close();
+
+        logger.close();
     }
 
 

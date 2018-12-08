@@ -10,6 +10,7 @@ import engine.physics.*;
 import engine.visualEffect.VisualEffectComp;
 import game.CharacterUtils;
 import game.GameUtils;
+import game.MeleeAbilityUtils;
 import utils.maths.Vec2;
 
 /**
@@ -25,21 +26,13 @@ public class MeleeAbility extends Ability{
 
 
 
-    public MeleeAbility(WorldContainer wc, int startEffectSoundIndex, int startupTime, int activeHitboxTime, int endlagTime, int rechargeTime,
-                        Shape hitboxShape, float distance, Sound onHitSound){
+    public MeleeAbility(WorldContainer wc, int startEffectSoundIndex, int hitboxEntity, int startupTime, int activeHitboxTime, int endlagTime, int rechargeTime, float distance){
         super(wc, startEffectSoundIndex, startupTime, activeHitboxTime, endlagTime, rechargeTime);
 
         this.relativeDistance = distance;
         this.relativeAngle = 0;
 
-        if (hitboxShape instanceof Circle){
-            hitboxEntity = CharacterUtils.allocateHitboxEntity(wc, (Circle)hitboxShape, onHitSound);
-        }
-
-        if (hitboxShape instanceof Rectangle){
-            throw new UnsupportedOperationException("Cannot have rectangle hitboxes as of now");
-        }
-
+        this.hitboxEntity = hitboxEntity;
     }
 //    public MeleeAbility(WorldContainer wc){
 //        this(wc, 5, 0.5f, new Circle(5), 0.0f, 0.0f, 10, 10, 10, 10);
@@ -67,13 +60,12 @@ public class MeleeAbility extends Ability{
     public void startEffect(WorldContainer wc, int requestingEntity) {
         wc.activateEntity(hitboxEntity);
 
-        PositionComp reqPosComp = (PositionComp)wc.getComponent(requestingEntity, PositionComp.class);
-        RotationComp reqRotComp = (RotationComp)wc.getComponent(requestingEntity, RotationComp.class);
-        AudioComp reqAudioComp = (AudioComp)wc.getComponent(requestingEntity, AudioComp.class);
+        PositionComp reqPosComp = wc.getComponent(requestingEntity, PositionComp.class);
+        RotationComp reqRotComp = wc.getComponent(requestingEntity, RotationComp.class);
+        //AudioComp reqAudioComp = (AudioComp)wc.getComponent(requestingEntity, AudioComp.class);
 
-        RotationComp hbRotComp = (RotationComp)wc.getComponent(hitboxEntity, RotationComp.class);
-        HitboxComp hbHitbComp = (HitboxComp) wc.getComponent(hitboxEntity, HitboxComp.class);
-
+        RotationComp hbRotComp = wc.getComponent(hitboxEntity, RotationComp.class);
+        HitboxComp hbHitbComp = wc.getComponent(hitboxEntity, HitboxComp.class);
 
 
 
@@ -115,8 +107,11 @@ public class MeleeAbility extends Ability{
     private void deactivateHitbox(WorldContainer wc) {
         wc.deactivateEntity(hitboxEntity);
         wc.activateComponent(hitboxEntity, VisualEffectComp.class);
-        wc.activateComponent(hitboxEntity, AudioComp.class);
         wc.activateComponent(hitboxEntity, PositionComp.class);
+
+        if (wc.hasComponent(hitboxEntity, AudioComp.class)) {
+            wc.activateComponent(hitboxEntity, AudioComp.class);
+        }
     }
 
 }

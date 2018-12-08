@@ -1,9 +1,6 @@
 package game.server;
 
-import engine.PositionComp;
-import engine.RotationComp;
-import engine.UserInput;
-import engine.WorldContainer;
+import engine.*;
 import engine.combat.abilities.ProjectileComp;
 import engine.graphics.*;
 import engine.graphics.text.Font;
@@ -15,10 +12,16 @@ import engine.network.NetworkPregamePackets;
 import engine.network.NetworkUtils;
 import engine.network.TcpPacketInput;
 import engine.network.client.ClientUtils;
+import engine.utils.tickers.LinearTicker;
+import engine.utils.tickers.Ticker;
 import engine.visualEffect.VisualEffectComp;
 import engine.window.Window;
+import utils.loggers.Logger;
 import utils.maths.Vec4;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -30,13 +33,16 @@ public class Server {
 
     private static final float FRAME_INTERVAL = 1.0f/60.0f;
 
+    private static String name = "server";
+    public static Logger logger = new Logger(name);
+
 
     private Window window;
     private UserInput userInput;
 
     private WorldContainer wc;
 
-    private long lastTime;
+    private Ticker updateTicker;
 
     //clinet connection listener
     private ServerConnectionInput connectionInput;
@@ -59,72 +65,102 @@ public class Server {
     //games running
     private ConcurrentMap<ServerGame, Thread> gamesRunning = new ConcurrentHashMap<>();
 
+    private boolean displayWindow;
+    private BufferedReader systemInReader;
 
+
+
+    public Server() {
+        this(false);
+    }
+    public Server(boolean displayWindow) {
+        this.displayWindow = displayWindow;
+
+        Server.logger.println("constructed");
+    }
 
     public void init() {
-        window = new Window(0.3f, 0.3f, "D1n-only Server SII");
-        userInput = new UserInput(window, 1, 1);
+        Server.logger.println("\n--- INIT SERVER ---\n");
 
-        //load stuff
-        Font.loadFonts(FontType.BROADWAY);
+        if (displayWindow) {
+            Server.logger.println("creating window");
+            window = new Window(0.3f, 0.3f, "D1n-only Server SII");
 
+            Server.logger.println("creating user input");
+            userInput = new UserInput(window, 1, 1);
+
+
+            //load stuff
+            Font.loadFonts(FontType.BROADWAY);
+            Server.logger.println("fonts loaded");
+
+        }
+        Server.logger.println("creating world container");
         wc = new WorldContainer();
+
+        Server.logger.println("initing world container");
         initWorldContainer();
+
+        Server.logger.println("creating initial entities");
         createInitialEntities();
 
 
+
         //create connection listener
+        Server.logger.println("creating connection listener");
         connectionInput = new ServerConnectionInput(NetworkUtils.PORT_NUMBER);
         serverConnectionInputThread = new Thread(connectionInput);
 
+        systemInReader = new BufferedReader(new InputStreamReader(System.in));
+
+        updateTicker = new LinearTicker(FRAME_INTERVAL, deltaTime -> update(deltaTime));
     }
 
     private void createInitialEntities() {
-        infoTextEntity1 = wc.createEntity("info text");
-        wc.addComponent(infoTextEntity1, new PositionComp(10, 10));
-        wc.addComponent(infoTextEntity1, new TextMeshComp(new TextMesh(
-                "", Font.getDefaultFont(), 64, new Vec4(1,0.6f,1,1)
-        )));
-        infoTextEntity2 = wc.createEntity("info text");
-        wc.addComponent(infoTextEntity2, new PositionComp(10, 250));
-        wc.addComponent(infoTextEntity2, new TextMeshComp(new TextMesh(
-                "", Font.getDefaultFont(), 64, new Vec4(1,0.6f,1,1)
-        )));
+        if (displayWindow) {
+            infoTextEntity1 = wc.createEntity("info text");
+            wc.addComponent(infoTextEntity1, new PositionComp(10, 10));
+            wc.addComponent(infoTextEntity1, new TextMeshComp(new TextMesh(
+                    "", Font.getDefaultFont(), 64, new Vec4(1, 0.6f, 1, 1)
+            )));
+            infoTextEntity2 = wc.createEntity("info text");
+            wc.addComponent(infoTextEntity2, new PositionComp(10, 250));
+            wc.addComponent(infoTextEntity2, new TextMeshComp(new TextMesh(
+                    "", Font.getDefaultFont(), 64, new Vec4(1, 0.6f, 1, 1)
+            )));
+        }
     }
 
     public void start() {
+        Server.logger.println("\n--- SERVER STARTING ---\n");
 
         serverConnectionInputThread.start();
 
-        lastTime = System.nanoTime();
-
-        float timeSinceUpdate = 0;
-
-        while (true) {
-            timeSinceUpdate += timePassed();
-            //System.out.println("Time since update: "+timeSinceUpdate);
-
-            if (timeSinceUpdate >= FRAME_INTERVAL) {
-                timeSinceUpdate -= FRAME_INTERVAL;
-
-                update();
-            }
-
-
-            if (window.shouldClosed() || userInput.isKeyboardPressed(UserInput.KEY_ESCAPE))
-                break;
-        }
-
+        updateTicker.start(); //blocking
 
         terminate();
 
     }
 
+    private void printServerState() {
+        printServerState("");
+    }
+    private void printServerState(String initialText) {
+        StringBuilder sb1 = new StringBuilder(64);
+        sb1.append("-> ").append(initialText).append("\n");
+        sb1.append("\tClients connected: " + connectedClients.size() + "\n");
+        sb1.append("\tClients idle: " + idleClients.size() + "\n");
+        sb1.append("\tClients in 1v1 queue: " + gameQueue1v1.size() + "\n");
+        sb1.append("\tClients in 2v2 queue: " + gameQueue2v2.size() + "\n");
+        sb1.append("\tGames running: " + gamesRunning.size() + "\n");
+        System.out.println(sb1.toString());
+    }
 
-    public void update() {
+    public void update(float deltaTime) {
 
         //poll window events
-        window.pollEvents();
+        if (displayWindow)
+            window.pollEvents();
 
 
         //add pending connections to server state
@@ -139,28 +175,46 @@ public class Server {
         //handle games running
         handleGamesRunning();
 
-        //print state
-        StringBuilder sb1 = new StringBuilder(64);
-        StringBuilder sb2 = new StringBuilder(64);
-        sb1.append("Server\n");
-        sb1.append("Clients connected: " + connectedClients.size() + "\n");
-        sb1.append("Clients idle: " + idleClients.size() + "\n");
-        sb2.append("Clients in 1v1 queue: " + gameQueue1v1.size() + "\n");
-        sb2.append("Clients in 2v2 queue: " + gameQueue2v2.size() + "\n");
-        sb2.append("Games running: " + gamesRunning.size() + "\n");
+        if (displayWindow) {
+            //print state
+            StringBuilder sb1 = new StringBuilder(64);
+            StringBuilder sb2 = new StringBuilder(64);
+            sb1.append("Server\n");
+            sb1.append("Clients connected: " + connectedClients.size() + "\n");
+            sb1.append("Clients idle: " + idleClients.size() + "\n");
+            sb2.append("Clients in 1v1 queue: " + gameQueue1v1.size() + "\n");
+            sb2.append("Clients in 2v2 queue: " + gameQueue2v2.size() + "\n");
+            sb2.append("Games running: " + gamesRunning.size() + "\n");
 
-        ((TextMeshComp) wc.getComponent(infoTextEntity1, TextMeshComp.class)).getTextMesh().setString( sb1.toString() );
-        ((TextMeshComp) wc.getComponent(infoTextEntity2, TextMeshComp.class)).getTextMesh().setString( sb2.toString() );
-
+            wc.getComponent(infoTextEntity1, TextMeshComp.class).getTextMesh().setString(sb1.toString());
+            wc.getComponent(infoTextEntity2, TextMeshComp.class).getTextMesh().setString(sb2.toString());
+        }
 
         //update systems to show server status
         wc.updateSystems();
+
+        if (displayWindow) {
+            if (window.shouldClosed() || userInput.isKeyboardPressed(UserInput.KEY_ESCAPE))
+                updateTicker.stop();
+        }
+        else {
+            try {
+                if (systemInReader.ready()) {
+                    String inline = systemInReader.readLine();
+                    //System.out.println(inline);
+                    if (inline.equals("s") || inline.equals("stop")) {
+                        updateTicker.stop();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void handleNewConnections() {
         if (connectionInput.hasConnectedClients()) {
 
-            System.out.println("New client connected");
             ServerClientHandler clientHandler = connectionInput.getConnectedClient();
 
             //put new client in list of clients and in the idle state
@@ -168,6 +222,7 @@ public class Server {
             idleClients.add(clientHandler);
 
 //            activateClientIcon(clientHandler);
+            printServerState("New client connected");
         }
     }
 
@@ -184,7 +239,7 @@ public class Server {
             //if client is disconnected, remove it
             //else tell it that server is alive
             if (tcpPacketIn.isRemoteSocketClosed()) {
-                System.err.println("A client has disconnected");
+                printServerState("An idle client disconnected");
 
                 //tell the client that we are disconecting it
                 client.getTcpPacketOut().sendHostDisconnected();
@@ -228,6 +283,8 @@ public class Server {
 
                 //let client know that it is put in queue
                 client.getTcpPacketOut().sendEmpty(NetworkPregamePackets.QUEUE_SERVER_PUT_IN_QUEUE);
+
+                printServerState("client moved to game queue");
             }
         }
     }
@@ -262,6 +319,8 @@ public class Server {
 
                     //terminate client object
                     client.terminate();
+
+                    printServerState("a game queue client has disconnected");
                 }
                 //tell client that the server is alive
                 else {
@@ -272,6 +331,7 @@ public class Server {
                 if (tcpPacketIn.removeIfHasPacket(NetworkPregamePackets.QUEUE_CLIENT_EXIT)) {
                     it.remove();
                     idleClients.add(client);
+                    printServerState("client removed from game queue");
                 }
             }
         }
@@ -281,7 +341,7 @@ public class Server {
         //1v1 queue
         if (gameQueue1v1.size() >= 2) {
 
-            System.out.println("At least two clients in game queue, starting game");
+            printServerState("starting a 1v1 game");
 
             //retrieve clients
             ServerClientHandler client1 = gameQueue1v1.pop();
@@ -300,7 +360,7 @@ public class Server {
         //2v2 queue
         if (gameQueue2v2.size() >= 4) {
 
-            System.out.println("At least two clients in game queue, starting game");
+            printServerState("starting a 2v2 game");
 
             //retrieve clients
             ServerClientHandler client1 = gameQueue2v2.pop();
@@ -333,28 +393,44 @@ public class Server {
     }
 
     public void terminate() {
+        Server.logger.println("\n--- SERVER TERMINATING ---\n");
+
+        Server.logger.println("terminate running games");
         //terminate games running
         terminateAllRunningGames();
 
-
+        Server.logger.println("terminating world container");
         wc.terminate();
-        window.close();
 
+        if (displayWindow) {
+            Server.logger.println("terminate window");
+            window.close();
+        }
+
+        Server.logger.println("terminating connection listener");
         connectionInput.terminate();
 
+        Server.logger.println("joining connection listen thread");
         try {
             serverConnectionInputThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        Window.terminateGLFW();
+        if (displayWindow) {
+            Server.logger.println("terminating GLFW");
+            Window.terminateGLFW();
+
+        }
+
+        Server.logger.println("BYE BYE");
+        Server.logger.close();
     }
 
     private void createGame(ServerGameTeams teams) {
 
 
-        ServerGame game = new ServerGame();
+        ServerGame game = new ServerGame(displayWindow);
         game.init(teams);
 
         Thread gameThread = new Thread(game);
@@ -396,34 +472,21 @@ public class Server {
     private void initWorldContainer() {
         wc.assignComponentType(PositionComp.class);
         wc.assignComponentType(RotationComp.class);
-        wc.assignComponentType(ColoredMeshComp.class);
-        wc.assignComponentType(TexturedMeshComp.class);
-        wc.assignComponentType(TextMeshComp.class);
         wc.assignComponentType(MeshCenterComp.class);
         wc.assignComponentType(ViewControlComp.class);
-        wc.assignComponentType(TextMeshComp.class);
-        wc.assignComponentType(ViewRenderComp.class);
-        wc.assignComponentType(VisualEffectComp.class);
         wc.assignComponentType(ProjectileComp.class); //because of draw order
 
+        if (displayWindow) {
+            wc.assignComponentType(ColoredMeshComp.class);
+            wc.assignComponentType(TexturedMeshComp.class);
+            wc.assignComponentType(TextMeshComp.class);
+            wc.assignComponentType(TextMeshComp.class);
+            wc.assignComponentType(ViewRenderComp.class);
+            wc.assignComponentType(VisualEffectComp.class);
 
 
-        wc.addSystem(new RenderSys(window));
+            wc.addSystem(new RenderSys(window));
+        }
     }
 
-
-
-    /**
-     * time passed since last call to this method
-     * @return
-     */
-    private float timePassed() {
-        long newTime = System.nanoTime();
-        int deltaTime = (int)(newTime - lastTime);
-        float deltaTimeF = (float) deltaTime;
-
-        lastTime = newTime;
-
-        return deltaTimeF/1000000000;
-    }
 }

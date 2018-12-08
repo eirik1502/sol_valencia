@@ -12,6 +12,23 @@ public class FileUtils {
     private FileUtils() {
     }
 
+    public static PrintWriter createPrintFile(String filepath) {
+        File file = new File(filepath);
+        return createPrintFile(file);
+    }
+    public static PrintWriter createPrintFile(File file) {
+        try {
+            OutputStream outStream = new FileOutputStream(file);
+            PrintWriter pw = new PrintWriter(outStream, true);
+            return pw;
+
+        } catch (FileNotFoundException e) {
+            System.err.println("could not create the log file");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static InputStream loadAsStream(String filepath) {
         return FileUtils.class.getClassLoader().getResourceAsStream(filepath);
     }

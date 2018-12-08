@@ -1,0 +1,23 @@
+{
+  "relative-resource-path": "characters/",
+  "characters": [
+    "ShrankStats.JSON",
+    {
+      "name": "Schmathias",
+      "normal-stats": {
+
+      },
+      "abilities": [
+        {
+
+        },
+        {
+
+        },
+        {
+          
+        }
+      ]
+    }
+  ]
+}

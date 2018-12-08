@@ -31,6 +31,8 @@ import engine.visualEffect.VisualEffectComp;
 import engine.visualEffect.VisualEffectSys;
 import engine.window.Window;
 import game.server.ServerGameDataComp;
+import game.server.ServerIngame;
+import utils.loggers.Logger;
 import utils.maths.M;
 import utils.maths.Vec2;
 import utils.maths.Vec4;
@@ -44,6 +46,7 @@ import java.util.List;
  */
 public class GameUtils {
 
+    public static Logger logger = new Logger();
 
     public static float SMALL_MAP_WIDTH = 1600f,
             SMALL_MAP_HEIGHT = 900f;
@@ -169,7 +172,7 @@ public class GameUtils {
         AudioComp backgroundAudioComp = new AudioComp(battlefield);
         backgroundAudioComp.backgroundAudio = true;
         backgroundAudioComp.backgroundMusic();
-        backgroundAudioComp.requestSound = 0;
+        backgroundAudioComp.requestSound(0);
         int backgroundMusicEntity = wc.createEntity();
         wc.addComponent(backgroundMusicEntity, backgroundAudioComp);
         //must have positionComponent for AudioSys to work.
@@ -180,7 +183,7 @@ public class GameUtils {
         AudioComp audioComp = new AudioComp(readyGo);
         audioComp.backgroundAudio = true;
         audioComp.backgroundSound();
-        audioComp.requestSound = 0;
+        audioComp.requestSound(0);
         int readyGoSoundEntity = wc.createEntity();
         wc.addComponent(readyGoSoundEntity, audioComp);
         wc.addComponent(readyGoSoundEntity, new PositionComp(0,0));
@@ -199,7 +202,8 @@ public class GameUtils {
         return gameDataEntity;
     }
 
-    public static void createMap(WorldContainer wc) {
+    public static void createMap(WorldContainer wc, boolean media) {
+        logger.printh1("creating small map");
 
         Vec2[][] startPositions = {
                 { new Vec2(100, SMALL_MAP_HEIGHT/2), new Vec2(100, SMALL_MAP_HEIGHT/2+100) },
@@ -208,26 +212,37 @@ public class GameUtils {
         GameUtils.teamStartPos = startPositions;
 
         //create background
-        createBackground(wc);
+        if (media) {
+            logger.println("creating background");
+            createBackground(wc);
+        } else {
+            //do this, because the networking needs an equal number of entities on the client and server
+            //this is shit, haha
+            wc.createEntity("background replacement entity");
+        }
 
         //create walls
+        logger.println("creating walls");
         float wallThickness = 64f;
-        createWall(wc, wallThickness/2, SMALL_MAP_HEIGHT/2, wallThickness, SMALL_MAP_HEIGHT);
-        createWall(wc, SMALL_MAP_WIDTH-wallThickness/2, SMALL_MAP_HEIGHT/2, wallThickness, SMALL_MAP_HEIGHT);
+        createWall(wc, wallThickness/2, SMALL_MAP_HEIGHT/2, wallThickness, SMALL_MAP_HEIGHT, media);
+        createWall(wc, SMALL_MAP_WIDTH-wallThickness/2, SMALL_MAP_HEIGHT/2, wallThickness, SMALL_MAP_HEIGHT, media);
 
 //        createWall(wc, MAP_WIDTH/2, wallThickness/2, MAP_WIDTH-wallThickness*2, wallThickness);
 //        createWall(wc, MAP_WIDTH/2, MAP_HEIGHT-wallThickness/2, MAP_WIDTH-wallThickness*2, wallThickness);
 
         //create holes
+        logger.println("creating holes");
         createRectangleHoleInvisible(wc, SMALL_MAP_WIDTH/2, wallThickness/2, SMALL_MAP_WIDTH-wallThickness*2, wallThickness);
         createRectangleHoleInvisible(wc, SMALL_MAP_WIDTH/2, SMALL_MAP_HEIGHT-wallThickness/2, SMALL_MAP_WIDTH-wallThickness*2, wallThickness);
-        createCircleHole(wc, SMALL_MAP_WIDTH/2, SMALL_MAP_HEIGHT/2, 48f);
+        createCircleHole(wc, SMALL_MAP_WIDTH/2, SMALL_MAP_HEIGHT/2, 48f, media);
 
     }
 
 
 
-    public static void createLargeMap(WorldContainer wc){
+    public static void createLargeMap(WorldContainer wc, boolean media){
+        if (!media) throw new UnsupportedOperationException("cannot create large map without media yet");
+
         final float scale = 2f; //1.3f;
 
         //////// WIN LINES
@@ -403,15 +418,16 @@ public class GameUtils {
 //        return sandbag;
 //    }
 
-    private static int createCircleHole(WorldContainer wc, float x, float y, float radius) {
+    private static int createCircleHole(WorldContainer wc, float x, float y, float radius, boolean media) {
         int hole = wc.createEntity("circle hole");
         float[] color = {0.0f, 0.0f, 0.0f};
 
         wc.addComponent(hole, new PositionComp(x, y));
 
-        wc.addComponent(hole, new ColoredMeshComp(ColoredMeshUtils.createCircleSinglecolor(radius, 16, color)));
-        //wc.addComponent(hole, new MeshCenterComp(radius, radius));
-
+        if (media) {
+            wc.addComponent(hole, new ColoredMeshComp(ColoredMeshUtils.createCircleSinglecolor(radius, 16, color)));
+            //wc.addComponent(hole, new MeshCenterComp(radius, radius));
+        }
 
         wc.addComponent(hole, new CollisionComp(new Circle(radius)));
         //wc.addComponent(hole, new PhysicsComp(500f, 10.0f));
@@ -440,6 +456,8 @@ public class GameUtils {
     }
 
     private static int createRectangleHoleInvisible(WorldContainer wc, float x, float y, float width, float height) {
+        logger.println("creting invisible rectangle wall");
+
         int hole = wc.createEntity("rectangle hole");
         float[] color = {0.0f, 0.0f, 0.0f};
 
@@ -457,6 +475,8 @@ public class GameUtils {
     }
 
     private static int createWallInvisible(WorldContainer wc, float x, float y, float width, float height) {
+        logger.println("creating invisible wall");
+
         int w = wc.createEntity("wall");
         wc.addComponent(w, new PositionComp(x, y));
 
@@ -472,6 +492,7 @@ public class GameUtils {
     }
 
     private static int createBackground(WorldContainer wc) {
+        logger.println("creating background");
         int bg = wc.createEntity("background");
         wc.addComponent(bg, new PositionComp(0, 0, -0.5f));
         wc.addComponent(bg, new TexturedMeshComp(TexturedMeshUtils.createRectangle("background_difuse.png", 1600, 900)));
@@ -502,14 +523,18 @@ public class GameUtils {
 
 
 
-    private static int createWall(WorldContainer wc, float x, float y, float width, float height) {
+    private static int createWall(WorldContainer wc, float x, float y, float width, float height, boolean media) {
+        logger.println("creating wall");
         int w = wc.createEntity("wall");
         wc.addComponent(w, new PositionComp(x, y));
 
-        wc.addComponent(w, new ColoredMeshComp(ColoredMeshUtils.createRectangle(width, height)));
-        wc.addComponent(w, new MeshCenterComp(width/2, height/2)); //physical rectangle is defined with position being the center, while the graphical square is defined in the upper left corner
+        if (media) {
+            logger.println("adding visual components");
+            wc.addComponent(w, new ColoredMeshComp(ColoredMeshUtils.createRectangle(width, height)));
+            wc.addComponent(w, new MeshCenterComp(width / 2, height / 2)); //physical rectangle is defined with position being the center, while the graphical square is defined in the upper left corner
+        }
 
-
+        logger.println("adding functional components");
         wc.addComponent(w, new PhysicsComp(0, 1, 1));
         wc.addComponent(w, new CollisionComp(new Rectangle(width, height)));
         wc.addComponent(w, new NaturalResolutionComp());

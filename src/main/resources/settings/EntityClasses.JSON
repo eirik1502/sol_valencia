@@ -1,0 +1,50 @@
+[
+  {
+    "name": "wall",
+    "components": {
+
+    }
+  },
+  {
+    "name": "hole",
+    "components": {
+
+    }
+  },
+  {
+    "name": "character",
+    "extends": "",
+    "components": [
+      {
+        "type": "PositionComp",
+        "values": {
+          "x": 10,
+          "y": 100,
+        }
+      },
+      {
+        "type": "PositionComp",
+        "values": {
+          "x": 10,
+          "y": 100,
+        }
+      },
+    ]
+  },
+  {
+    "name": "shrank",
+    "extends": "character",
+  },
+  {
+    "name": "schmathias",
+    "extends": "character",
+  },
+  {
+    "name": "brail",
+    "extends": "character",
+  },
+  {
+    "name": "magnet",
+    "extends": "character",
+  },
+]

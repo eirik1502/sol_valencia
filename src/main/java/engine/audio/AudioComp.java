@@ -17,13 +17,11 @@ public class AudioComp implements Component {
 
     public List<Sound> soundList = new ArrayList<Sound>();
 
-    private int sourcePointer;
+    int sourcePointer;
 
-    public int requestSound = -1;
-
-    public boolean requestStopSource = false;
-
-    public boolean backgroundAudio = false;
+    private int requestSoundIndex = -1;
+    public boolean requestStopSource = false; //what are these for date 07.12.18
+    public boolean backgroundAudio = false; //waht are these for
 
 
     public AudioComp(Sound... s){
@@ -51,23 +49,22 @@ public class AudioComp implements Component {
         setMaxDistance(maxDistance);
     }
 
-
-
-
     public AudioComp(List<Sound> soundList){
         this.soundList = soundList;
         this.sourcePointer = alGenSources();
     }
 
-    public void playSound(int i){
-        playSource(soundList.get(i));
+    public void requestSound(int soundIndex) {
+        requestSoundIndex = soundIndex;
     }
 
-    private void playSource(Sound sound){
-        alSourceStop(sourcePointer);
-        alSourcei(sourcePointer, AL_BUFFER, sound.getBufferPointer());
-        alSourcePlay(sourcePointer);
+    void setRequestSoundIndex(int index) {
+        this.requestSoundIndex = index;
     }
+    int getRequestSoundIndex() {
+        return requestSoundIndex;
+    }
+
 
     public void stopSound() {
         alSourceStop(sourcePointer);

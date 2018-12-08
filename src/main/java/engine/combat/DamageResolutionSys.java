@@ -92,15 +92,13 @@ public class DamageResolutionSys implements Sys {
     }
 
     public static void applyDamage(WorldContainer wc, int damaged, int damager) {
-        DamagerComp dmgerComp = (DamagerComp)wc.getComponent(damager, DamagerComp.class);
-        PositionComp dmgerPosComp = (PositionComp)wc.getComponent(damager, PositionComp.class);
-        RotationComp dmgerRotComp = (RotationComp)wc.getComponent(damager, RotationComp.class);
-        VisualEffectComp dmgerViseffComp = (VisualEffectComp)wc.getComponent(damager, VisualEffectComp.class);
+        DamagerComp dmgerComp = wc.getComponent(damager, DamagerComp.class);
+        PositionComp dmgerPosComp = wc.getComponent(damager, PositionComp.class);
+        RotationComp dmgerRotComp = wc.getComponent(damager, RotationComp.class);
 
-
-        DamageableComp dmgablComp = (DamageableComp)wc.getComponent(damaged, DamageableComp.class);
-        PositionComp dmgablPosComp = (PositionComp)wc.getComponent(damaged, PositionComp.class);
-        PhysicsComp dmgablPhysComp = (PhysicsComp)wc.getComponent(damaged, PhysicsComp.class);
+        DamageableComp dmgablComp = wc.getComponent(damaged, DamageableComp.class);
+        PositionComp dmgablPosComp = wc.getComponent(damaged, PositionComp.class);
+        PhysicsComp dmgablPhysComp = wc.getComponent(damaged, PhysicsComp.class);
 
 
         //reset physics for damageable. Should happen before naturalResolution

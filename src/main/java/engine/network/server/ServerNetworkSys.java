@@ -75,7 +75,7 @@ public class ServerNetworkSys implements Sys {
             if (clientHandlers.size() == 0 || (clientHandlers.size() == 1 && i==1) ) break; //<-----------------------------------------------UGLY
 
             //get input from each client, hoply corresponding to character ordering, and update the entity
-            CharacterInputComp inpComp = (CharacterInputComp) wc.getComponent(entity, CharacterInputComp.class);
+            CharacterInputComp inpComp = wc.getComponent(entity, CharacterInputComp.class);
 
             //data from clients
             CharacterInputData inData = clientHandlers.get(i).getInputData();

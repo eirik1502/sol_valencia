@@ -1,0 +1,19 @@
+Log created at: 08.12.18_20:18:56
+INIT
+getting tcp in and out
+creating world container
+RUN
+creating window
+creating user input
+loading fonts
+initing audio master
+assigning component types
+creating map entities
+creating client characters
+creating game data entity
+adding client systems
+recieved game exit from server
+setting should terminate
+ON TERMINATE
+terminating world container
+closing window

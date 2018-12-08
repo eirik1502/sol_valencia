@@ -89,13 +89,13 @@ public class OnScreenSys implements Sys{
                     wc.activateEntity( dataComp.gameEndVictoryEntity );
                     AudioComp audioComp = (AudioComp) wc.getComponent (dataComp.gameEndVictoryEntity, AudioComp.class);
 
-                    audioComp.requestSound = 0;
+                    audioComp.requestSound(0);
                 }
                 else if (!dataComp.gameWon && !wc.hasComponent(dataComp.gameEndDefeatEntity, AudioComp.class)) {
 
                     wc.activateEntity( dataComp.gameEndDefeatEntity );
                     AudioComp audioComp = (AudioComp) wc.getComponent (dataComp.gameEndDefeatEntity, AudioComp.class);
-                    audioComp.requestSound = 0;
+                    audioComp.requestSound(0);
 
 
 //                    audioComp.requestSound = 0;

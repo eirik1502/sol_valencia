@@ -31,13 +31,16 @@ public class AbilitySys implements Sys {
 
         wc.entitiesOfComponentTypeStream(AbilityComp.class).forEach(entity -> {
 
-            PositionComp posComp = (PositionComp) wc.getComponent(entity, PositionComp.class);
-            RotationComp rotComp = (RotationComp) wc.getComponent(entity, RotationComp.class);
-            AbilityComp abComp = (AbilityComp) wc.getComponent(entity, AbilityComp.class);
-            AudioComp audioComp = (AudioComp) wc.getComponent(entity, AudioComp.class);
+            PositionComp posComp = wc.getComponent(entity, PositionComp.class);
+            RotationComp rotComp = wc.getComponent(entity, RotationComp.class);
+            AbilityComp abComp = wc.getComponent(entity, AbilityComp.class);
+            AudioComp audioComp =
+                    wc.hasComponent(entity, AudioComp.class) ?
+                    wc.getComponent(entity, AudioComp.class) :
+                    null;
 
             if (wc.hasComponent(entity, DamageableComp.class)) {
-                DamageableComp dmgableComp = (DamageableComp)wc.getComponent(entity, DamageableComp.class);
+                DamageableComp dmgableComp = wc.getComponent(entity, DamageableComp.class);
 
                 if (dmgableComp.isInterrupted()) {
                     abComp.abortExecution();
@@ -133,8 +136,10 @@ public class AbilitySys implements Sys {
         ability.startEffect(wc, entity);
 
         //play start effect sound
-        if (ability.getStartEffectSoundIndex() != -1) {
-            audioComp.requestSound = ability.getStartEffectSoundIndex();
+        if (audioComp != null) {
+            if (ability.getStartEffectSoundIndex() != -1) {
+                audioComp.requestSound(ability.getStartEffectSoundIndex());
+            }
         }
     }
 

@@ -16,6 +16,7 @@ public class UserInput {
     public static final int KEY_Q = GLFW_KEY_Q;
     public static final int KEY_E = GLFW_KEY_E;
     public static final int KEY_F = GLFW_KEY_F;
+    public static final int KEY_R = GLFW_KEY_R;
 
     public static final int
             KEY_LEFT = GLFW_KEY_LEFT,
