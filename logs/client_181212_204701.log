@@ -1,0 +1,77 @@
+Log created at: 12.12.18_20:47:01
+INIT
+getting tcp in and out
+creating world container
+RUN
+creating window
+creating user input
+loading fonts
+initing audio master
+assigning component types
+creating map entities
+creating client characters
+creating game data entity
+adding client systems
+recieved game exit from server
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+ON TERMINATE
+terminating world container
+closing window

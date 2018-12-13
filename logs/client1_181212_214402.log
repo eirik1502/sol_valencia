@@ -1,0 +1,25 @@
+Log created at: 12.12.18_21:44:02
+INIT
+getting tcp in and out
+creating world container
+RUN
+creating window
+creating user input
+loading fonts
+initing audio master
+assigning component types
+creating map entities
+creating client characters
+creating game data entity
+adding client systems
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+remote socket was closed
+setting should terminate
+ON TERMINATE
+terminating world container
+closing window

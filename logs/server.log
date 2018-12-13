@@ -1,4 +1,4 @@
-Log created at: 08.12.18_20:27:41
+Log created at: 09.12.18_20:51:32
 constructed
 
 --- INIT SERVER ---
@@ -10,11 +10,3 @@ creating connection listener
 
 --- SERVER STARTING ---
 
-
---- SERVER TERMINATING ---
-
-terminate running games
-terminating world container
-terminating connection listener
-joining connection listen thread
-BYE BYE

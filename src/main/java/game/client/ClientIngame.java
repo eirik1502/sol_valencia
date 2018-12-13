@@ -27,6 +27,8 @@ import utils.loggers.Logger;
 public class ClientIngame implements Runnable{
 
     private static final float FRAME_INTERVAL = 1.0f/60.0f;
+    private float relWindowSize = 0.5f;//-1;
+
 
     public static final float WINDOW_WIDTH = 1600f, WINDOW_HEIGHT = 900f;
 
@@ -51,8 +53,6 @@ public class ClientIngame implements Runnable{
 
 
     private ClientGameTeams teams;
-
-    private float relWindowSize = -1;
 
     //must be true as of now
     private boolean displayWindow = true;
