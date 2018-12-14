@@ -53,6 +53,14 @@ public class Logger {
         if (pw == null) return;
         pw.println(s);
     }
+    public void printError(String s) {
+        if (pw == null) return;
+        pw.println("[ERROR] " + s);
+    }
+    public void printWarning(String s) {
+        if (pw == null) return;
+        pw.println("[warning] " + s);
+    }
     public void println(float f) {
         if (pw == null) return;
         pw.println(f);
