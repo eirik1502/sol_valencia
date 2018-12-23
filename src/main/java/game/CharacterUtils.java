@@ -31,7 +31,7 @@ public class CharacterUtils {
 
     private static final float[] charactersRadius = { 32, 32, 44, 36 };
     private static final float[] charactersMoveAccel = { 1800, 2000, 2000, 2000 };
-    private static SpecificCharacterUtils[] charactersUtils = {new ShrankUtils()};
+    private static SpecificCharacterUtils[] charactersUtils = {new ShrankUtils(), null, null, new MagnetUtils()};
 
 
     private static int characterCount; //this is for a hack, not actual count

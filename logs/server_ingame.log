@@ -1,4 +1,4 @@
-Log created at: 08.12.18_20:28:12
+Log created at: 23.12.18_17:39:18
 INIT
 map = small map
 START
@@ -15,7 +15,7 @@ creating holes
 creting invisible rectangle wall
 creting invisible rectangle wall
 create server characters
-Server game initiated with clients: [game.server.ServerClientHandler@31036edb, game.server.ServerClientHandler@743ee3f2]
+Server game initiated with clients: [game.server.ServerClientHandler@6543c7d1, game.server.ServerClientHandler@4f39bc17]
 //////////////////
 //// Entities ////
 [ 0   background replacement entity entity]
@@ -48,102 +48,92 @@ Server game initiated with clients: [game.server.ServerClientHandler@31036edb, g
 		HoleComp                      instance: {}
 
 [ 6   character entity]
-		CharacterComp                 instance: {"respawnTime":60,"respawnTimer":-1,"moveAccel":1800.0,"respawnCount":0}
+		CharacterComp                 instance: {"respawnTime":60,"respawnTimer":-1,"moveAccel":2000.0,"respawnCount":0}
 		PositionComp                  instance: {"x":100.0,"y":450.0,"z":0.0}
 		RotationComp                  instance: {"angle":0.0}
 		PhysicsComp                   instance: {"velocity":{"x":0.0,"y":0.0},"acceleration":{"x":0.0,"y":0.0},"impulse":{"x":0.0,"y":0.0},"frictionModel":1,"invMass":0.0125,"frictionConst":5.0,"elasticity":0.3}
-		CollisionComp                 instance: {"shape":{"radius":32.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		CollisionComp                 instance: {"shape":{"radius":36.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 		NaturalResolutionComp         instance: {}
 		AffectedByHoleComp            instance: {"holeAffectedFlag":false}
 		DamageableComp                instance: {"damaged":0.0,"stunTimer":0,"interrupted":false,"frameHitData":[]}
 		CharacterInputComp            instance: {"moveLeft":false,"moveRight":false,"moveUp":false,"moveDown":false,"aimX":0.0,"aimY":0.0,"action1":false,"action2":false,"action3":false}
 		InterpolationComp             instance: {"lastFrame":0,"lastFrameState":{"x":0.0,"y":0.0,"rotation":0.0},"nextFrame":0,"nextFrameState":{"x":0.0,"y":0.0,"rotation":0.0},"newFrame":0,"currentInterpFrame":0}
 		TeamComp                      instance: {"team":0,"idOnTeam":0}
-		AbilityComp                   instance: {"abilities":[{"startDistance":64.0,"projStartSpeed":1200.0,"projLifeTime":30,"knockbackAngle":0.0,"projEntity":7,"abilityId":0,"startupTime":2,"effectTime":0,"endlagTime":2,"rechargeTime":30,"startEffectSoundIndex":0,"recharging":false,"requestExecution":false,"counter":0},{"startDistance":64.0,"projStartSpeed":1500.0,"projLifeTime":120,"knockbackAngle":0.0,"projEntity":8,"abilityId":1,"startupTime":15,"effectTime":0,"endlagTime":10,"rechargeTime":120,"startEffectSoundIndex":1,"recharging":false,"requestExecution":false,"counter":0},{"hitboxEntity":9,"relativeDistance":0.0,"relativeAngle":0.0,"abilityId":2,"startupTime":8,"effectTime":2,"endlagTime":8,"rechargeTime":180,"startEffectSoundIndex":2,"recharging":false,"requestExecution":false,"counter":0}],"abortExecution":false,"newExecuted":-1}
+		AbilityComp                   instance: {"abilities":[{"hitboxEntity":9,"relativeDistance":128.0,"relativeAngle":0.0,"abilityId":0,"startupTime":6,"effectTime":6,"endlagTime":6,"rechargeTime":13,"startEffectSoundIndex":0,"recharging":false,"requestExecution":false,"counter":0},{"startDistance":64.0,"projStartSpeed":1500.0,"projLifeTime":90,"knockbackAngle":0.0,"projEntity":7,"abilityId":1,"startupTime":30,"effectTime":0,"endlagTime":18,"rechargeTime":50,"startEffectSoundIndex":1,"recharging":false,"requestExecution":false,"counter":0},{"startDistance":64.0,"projStartSpeed":400.0,"projLifeTime":40,"knockbackAngle":0.0,"projEntity":8,"abilityId":2,"startupTime":12,"effectTime":0,"endlagTime":12,"rechargeTime":50,"startEffectSoundIndex":2,"recharging":false,"requestExecution":false,"counter":0}],"abortExecution":false,"newExecuted":-1}
 		UserCharacterInputComp        instance: {}
 		ViewControlComp               instance: {"viewOffsetX":-800.0,"viewOffsetY":-450.0}
 		ControlledComp                instance: {}
 		SoundListenerComp             instance: {}
 
-[ 7   shrankRapidShot entity]
+[ 7   magnetSpearThrow entity]
 		PositionComp                  instance: {"x":0.0,"y":0.0,"z":1.5}
 		/inactive/ RotationComp                  instance: {"angle":0.0}
 		/inactive/ PhysicsComp                   instance: {"velocity":{"x":0.0,"y":0.0},"acceleration":{"x":0.0,"y":0.0},"impulse":{"x":0.0,"y":0.0},"frictionModel":0,"invMass":0.05,"frictionConst":0.05,"elasticity":0.3}
 		/inactive/ HitboxComp                    instance: {"owner":-1,"entityInteractions":[]}
 		/inactive/ ProjectileComp                instance: {"lifeTime":0,"abilityId":0,"shouldDeactivateFlag":false}
-		/inactive/ DamagerComp                   instance: {"damage":100.0,"baseKnockback":180.0,"knockbackRatio":0.5,"knockbackPoint":-128.0,"towardPoint":false,"deltDamageFlag":false}
-		/inactive/ CollisionComp                 instance: {"shape":{"radius":8.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		/inactive/ DamagerComp                   instance: {"damage":400.0,"baseKnockback":800.0,"knockbackRatio":2.0,"knockbackPoint":-32.0,"towardPoint":false,"deltDamageFlag":false}
+		/inactive/ CollisionComp                 instance: {"shape":{"radius":32.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 
-[ 8   shrankHyperbeam entity]
+[ 8   magnetLion entity]
 		PositionComp                  instance: {"x":0.0,"y":0.0,"z":1.5}
 		/inactive/ RotationComp                  instance: {"angle":0.0}
 		/inactive/ PhysicsComp                   instance: {"velocity":{"x":0.0,"y":0.0},"acceleration":{"x":0.0,"y":0.0},"impulse":{"x":0.0,"y":0.0},"frictionModel":0,"invMass":0.05,"frictionConst":0.05,"elasticity":0.3}
 		/inactive/ HitboxComp                    instance: {"owner":-1,"entityInteractions":[]}
 		/inactive/ ProjectileComp                instance: {"lifeTime":0,"abilityId":0,"shouldDeactivateFlag":false}
-		/inactive/ DamagerComp                   instance: {"damage":350.0,"baseKnockback":900.0,"knockbackRatio":1.1,"knockbackPoint":-256.0,"towardPoint":false,"deltDamageFlag":false}
-		/inactive/ CollisionComp                 instance: {"shape":{"radius":20.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		/inactive/ DamagerComp                   instance: {"damage":600.0,"baseKnockback":800.0,"knockbackRatio":0.5,"knockbackPoint":0.0,"towardPoint":false,"deltDamageFlag":false}
+		/inactive/ CollisionComp                 instance: {"shape":{"radius":64.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 
 [ 9   melee hitbox entity]
 		PositionComp                  instance: {"x":0.0,"y":0.0,"z":-0.1}
 		/inactive/ RotationComp                  instance: {"angle":0.0}
 		/inactive/ HitboxComp                    instance: {"owner":-1,"entityInteractions":[]}
-		/inactive/ DamagerComp                   instance: {"damage":20.0,"baseKnockback":1200.0,"knockbackRatio":0.1,"knockbackPoint":0.0,"towardPoint":false,"deltDamageFlag":false}
-		/inactive/ CollisionComp                 instance: {"shape":{"radius":98.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		/inactive/ DamagerComp                   instance: {"damage":150.0,"baseKnockback":600.0,"knockbackRatio":0.7,"knockbackPoint":-100.0,"towardPoint":false,"deltDamageFlag":false}
+		/inactive/ CollisionComp                 instance: {"shape":{"radius":20.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 
 [ 10   character entity]
-		CharacterComp                 instance: {"respawnTime":60,"respawnTimer":-1,"moveAccel":1800.0,"respawnCount":0}
+		CharacterComp                 instance: {"respawnTime":60,"respawnTimer":-1,"moveAccel":2000.0,"respawnCount":0}
 		PositionComp                  instance: {"x":1500.0,"y":450.0,"z":0.01}
 		RotationComp                  instance: {"angle":0.0}
 		PhysicsComp                   instance: {"velocity":{"x":0.0,"y":0.0},"acceleration":{"x":0.0,"y":0.0},"impulse":{"x":0.0,"y":0.0},"frictionModel":1,"invMass":0.0125,"frictionConst":5.0,"elasticity":0.3}
-		CollisionComp                 instance: {"shape":{"radius":32.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		CollisionComp                 instance: {"shape":{"radius":36.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 		NaturalResolutionComp         instance: {}
 		AffectedByHoleComp            instance: {"holeAffectedFlag":false}
 		DamageableComp                instance: {"damaged":0.0,"stunTimer":0,"interrupted":false,"frameHitData":[]}
 		CharacterInputComp            instance: {"moveLeft":false,"moveRight":false,"moveUp":false,"moveDown":false,"aimX":0.0,"aimY":0.0,"action1":false,"action2":false,"action3":false}
 		InterpolationComp             instance: {"lastFrame":0,"lastFrameState":{"x":0.0,"y":0.0,"rotation":0.0},"nextFrame":0,"nextFrameState":{"x":0.0,"y":0.0,"rotation":0.0},"newFrame":0,"currentInterpFrame":0}
 		TeamComp                      instance: {"team":1,"idOnTeam":0}
-		AbilityComp                   instance: {"abilities":[{"startDistance":64.0,"projStartSpeed":1200.0,"projLifeTime":30,"knockbackAngle":0.0,"projEntity":11,"abilityId":0,"startupTime":2,"effectTime":0,"endlagTime":2,"rechargeTime":30,"startEffectSoundIndex":0,"recharging":false,"requestExecution":false,"counter":0},{"startDistance":64.0,"projStartSpeed":1500.0,"projLifeTime":120,"knockbackAngle":0.0,"projEntity":12,"abilityId":1,"startupTime":15,"effectTime":0,"endlagTime":10,"rechargeTime":120,"startEffectSoundIndex":1,"recharging":false,"requestExecution":false,"counter":0},{"hitboxEntity":13,"relativeDistance":0.0,"relativeAngle":0.0,"abilityId":2,"startupTime":8,"effectTime":2,"endlagTime":8,"rechargeTime":180,"startEffectSoundIndex":2,"recharging":false,"requestExecution":false,"counter":0}],"abortExecution":false,"newExecuted":-1}
+		AbilityComp                   instance: {"abilities":[{"hitboxEntity":13,"relativeDistance":128.0,"relativeAngle":0.0,"abilityId":0,"startupTime":6,"effectTime":6,"endlagTime":6,"rechargeTime":13,"startEffectSoundIndex":0,"recharging":false,"requestExecution":false,"counter":0},{"startDistance":64.0,"projStartSpeed":1500.0,"projLifeTime":90,"knockbackAngle":0.0,"projEntity":11,"abilityId":1,"startupTime":30,"effectTime":0,"endlagTime":18,"rechargeTime":50,"startEffectSoundIndex":1,"recharging":false,"requestExecution":false,"counter":0},{"startDistance":64.0,"projStartSpeed":400.0,"projLifeTime":40,"knockbackAngle":0.0,"projEntity":12,"abilityId":2,"startupTime":12,"effectTime":0,"endlagTime":12,"rechargeTime":50,"startEffectSoundIndex":2,"recharging":false,"requestExecution":false,"counter":0}],"abortExecution":false,"newExecuted":-1}
 		UserCharacterInputComp        instance: {}
 		ViewControlComp               instance: {"viewOffsetX":-800.0,"viewOffsetY":-450.0}
 		ControlledComp                instance: {}
 		SoundListenerComp             instance: {}
 
-[ 11   shrankRapidShot entity]
+[ 11   magnetSpearThrow entity]
 		PositionComp                  instance: {"x":0.0,"y":0.0,"z":1.5}
 		/inactive/ RotationComp                  instance: {"angle":0.0}
 		/inactive/ PhysicsComp                   instance: {"velocity":{"x":0.0,"y":0.0},"acceleration":{"x":0.0,"y":0.0},"impulse":{"x":0.0,"y":0.0},"frictionModel":0,"invMass":0.05,"frictionConst":0.05,"elasticity":0.3}
 		/inactive/ HitboxComp                    instance: {"owner":-1,"entityInteractions":[]}
 		/inactive/ ProjectileComp                instance: {"lifeTime":0,"abilityId":0,"shouldDeactivateFlag":false}
-		/inactive/ DamagerComp                   instance: {"damage":100.0,"baseKnockback":180.0,"knockbackRatio":0.5,"knockbackPoint":-128.0,"towardPoint":false,"deltDamageFlag":false}
-		/inactive/ CollisionComp                 instance: {"shape":{"radius":8.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		/inactive/ DamagerComp                   instance: {"damage":400.0,"baseKnockback":800.0,"knockbackRatio":2.0,"knockbackPoint":-32.0,"towardPoint":false,"deltDamageFlag":false}
+		/inactive/ CollisionComp                 instance: {"shape":{"radius":32.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 
-[ 12   shrankHyperbeam entity]
+[ 12   magnetLion entity]
 		PositionComp                  instance: {"x":0.0,"y":0.0,"z":1.5}
 		/inactive/ RotationComp                  instance: {"angle":0.0}
 		/inactive/ PhysicsComp                   instance: {"velocity":{"x":0.0,"y":0.0},"acceleration":{"x":0.0,"y":0.0},"impulse":{"x":0.0,"y":0.0},"frictionModel":0,"invMass":0.05,"frictionConst":0.05,"elasticity":0.3}
 		/inactive/ HitboxComp                    instance: {"owner":-1,"entityInteractions":[]}
 		/inactive/ ProjectileComp                instance: {"lifeTime":0,"abilityId":0,"shouldDeactivateFlag":false}
-		/inactive/ DamagerComp                   instance: {"damage":350.0,"baseKnockback":900.0,"knockbackRatio":1.1,"knockbackPoint":-256.0,"towardPoint":false,"deltDamageFlag":false}
-		/inactive/ CollisionComp                 instance: {"shape":{"radius":20.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		/inactive/ DamagerComp                   instance: {"damage":600.0,"baseKnockback":800.0,"knockbackRatio":0.5,"knockbackPoint":0.0,"towardPoint":false,"deltDamageFlag":false}
+		/inactive/ CollisionComp                 instance: {"shape":{"radius":64.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 
 [ 13   melee hitbox entity]
 		PositionComp                  instance: {"x":0.0,"y":0.0,"z":-0.1}
 		/inactive/ RotationComp                  instance: {"angle":0.0}
 		/inactive/ HitboxComp                    instance: {"owner":-1,"entityInteractions":[]}
-		/inactive/ DamagerComp                   instance: {"damage":20.0,"baseKnockback":1200.0,"knockbackRatio":0.1,"knockbackPoint":0.0,"towardPoint":false,"deltDamageFlag":false}
-		/inactive/ CollisionComp                 instance: {"shape":{"radius":98.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
+		/inactive/ DamagerComp                   instance: {"damage":150.0,"baseKnockback":600.0,"knockbackRatio":0.7,"knockbackPoint":-100.0,"towardPoint":false,"deltDamageFlag":false}
+		/inactive/ CollisionComp                 instance: {"shape":{"radius":20.0},"primaryCollisionDataList":[],"secondaryCollisionDataList":[]}
 
 [ 14   game data entity]
 		ServerGameDataComp            instance: {"teamWon":-1}
 
 
-a client disconnected
-requesting server termination
-a client disconnected
-requesting server termination
-a client disconnected
-requesting server termination
-a client disconnected
-requesting server termination
-a client disconnected
-requesting server termination
