@@ -202,7 +202,7 @@ public class CharacterUtils {
 
 
 
-
+/*
     //-----------DEPRECATED BELOW-------------
 
     @Deprecated
@@ -430,7 +430,7 @@ public class CharacterUtils {
         }
         return characterEntity;
     }
-
+*/
     //    private static int createShitface(
 //            WorldContainer wc, int charId,
 //            boolean controlled, int team, int idOnTeam, float x, float y) {
