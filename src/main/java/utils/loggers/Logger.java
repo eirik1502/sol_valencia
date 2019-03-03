@@ -24,7 +24,12 @@ public class Logger {
         this(logname, false);
     }
     public Logger(String logname, boolean uniquePerRun) {
-        String filepath = "logs/" + logname;
+        String logDirName = "./logs/";
+        File logDir = new File(logDirName);
+        if (!logDir.exists())
+            logDir.mkdir();
+
+        String filepath = logDirName + logname;
         String timeext = "";
 
         if (uniquePerRun) {
