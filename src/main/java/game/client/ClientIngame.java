@@ -27,7 +27,7 @@ import utils.loggers.Logger;
 public class ClientIngame implements Runnable{
 
     private static final float FRAME_INTERVAL = 1.0f/60.0f;
-    private float relWindowSize = 0.5f;//-1;
+    private float relWindowSize = -1;//0.5f;//
 
 
     public static final float WINDOW_WIDTH = 1600f, WINDOW_HEIGHT = 900f;
