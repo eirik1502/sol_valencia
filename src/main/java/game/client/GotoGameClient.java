@@ -20,7 +20,7 @@ public class GotoGameClient {
 
     private String hostname = "localhost";
     private String gametype = MODE_1V1;
-    private int characterId = 0;
+    private int characterId = 3;
     private boolean loop = false;
 
 
