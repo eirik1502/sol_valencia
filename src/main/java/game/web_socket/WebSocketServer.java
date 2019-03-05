@@ -54,7 +54,9 @@ public class WebSocketServer {
                 clientConnections.remove(clientConnections);
                 // do some thing if required
             }
-            System.out.println("ERROR from " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
+            System.out.println("ERROR from control client at " +
+                    (conn != null? conn.getRemoteSocketAddress().getAddress().getHostAddress() :
+                    "client disconnected"));
         };
     }
 

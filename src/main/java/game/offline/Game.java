@@ -29,8 +29,6 @@ public class Game {
 
     protected static final float FRAME_INTERVAL = 1.0f/60.0f;
 
-    public static final float WINDOW_WIDTH = 1600f, WINDOW_HEIGHT = 900f;
-
     protected Window window;
     protected UserInput userInput;
 

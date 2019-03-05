@@ -1,11 +1,14 @@
 package game.offline;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import engine.UserInput;
 import engine.utils.DeltaTimer;
 import game.chart.Plotter;
 import game.chart.StaticDataset;
 import game.web_socket.WebSocketServer;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class DevGame extends Game{
 
     //WebSocket for communicating stats to control panel clients
     private int controlServerPort = 4444;
-    private WebSocketServer controlServer;
+    private WebSocketServer controlServer = null;
 
     private boolean controlClientConnected = false;
 
@@ -46,13 +49,13 @@ public class DevGame extends Game{
         controlServer.setOnClientConnected((conn, handshake) -> {
             this.controlClientConnected = true;
         });
-        while(!this.controlClientConnected) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        while(!this.controlClientConnected) {
+//            try {
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         //will block
         super.start();
@@ -111,9 +114,14 @@ public class DevGame extends Game{
         roundtripTimes.add(roundtripTime);
 
         //communicate measures to control client
-        String data = String.format("{\"timePassed\":%f, \"pollEventTime\":%f, \"updateTime\":%f, \"roundtripTime\":%f}",
-                deltaTime, pollEventTime, updateTime, roundtripTime);
-        controlServer.send(data);
+        if (controlClientConnected) {
+            JsonObject jo = new JsonObject();
+            jo.addProperty("timePassed", deltaTime);
+            jo.addProperty("pollEventTime", pollEventTime);
+            jo.addProperty("updateTime", updateTime);
+            jo.addProperty("roundtripTime", roundtripTime);
+            controlServer.send(jo.toString());
+        }
     }
 
     protected void enterEditModeIfRequested() {

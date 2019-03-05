@@ -82,10 +82,17 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // the window will not be resizable
 
-        GLFW.glfwWindowHint(139266, 3);
-        GLFW.glfwWindowHint(139267, 2);
-        GLFW.glfwWindowHint(139272, 204801);
-        GLFW.glfwWindowHint(139270, 1);
+        //problems..
+//        GLFW.glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//        GLFW.glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+////
+////        //dependent on opengl 3.0
+//        GLFW.glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+//
+//        //dependent on opengl 3.2
+//        GLFW.glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+
 
         GLFWinitialized = true;
     }
