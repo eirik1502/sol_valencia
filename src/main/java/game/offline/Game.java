@@ -8,17 +8,12 @@ import engine.graphics.text.Font;
 import engine.graphics.text.FontType;
 import engine.graphics.view_.View;
 import engine.physics.*;
-import engine.utils.DeltaTimer;
 import engine.utils.tickers.LinearTicker;
 import engine.window.Window;
 import game.GameUtils;
-import game.chart.Plotter;
-import game.chart.StaticDataset;
 import game.loaders.ColoredMeshCompLoader;
 import game.loaders.Loader;
-import game.web_socket.WebSocketServer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,7 +50,7 @@ public class Game {
 
         //init loader
         loader = new Loader();
-        loader.addComponentLoader(ColoredMeshComp.class, new ColoredMeshCompLoader());
+        EntityClass.addComponentLoader(ColoredMeshComp.class, new ColoredMeshCompLoader());
 
         createConfigEntities();
 
@@ -68,8 +63,12 @@ public class Game {
 
     protected void createConfigEntities() {
         String configPath = "configs/EntityClasses.JSON";
-        List<EntityEssence> essences = loader.loadEssenceFromConfig(configPath);
+        List<EntityClass> essences = loader.loadEssenceFromConfig(configPath);
         essences.forEach(e -> e.instanciate(wc));
+
+        int ent = essences.get(0).instanciate(wc);
+        PositionComp posComp = wc.getComponent(ent, PositionComp.class);
+        posComp.setX(100);
     }
 
     private void assignComponents(WorldContainer wc) {

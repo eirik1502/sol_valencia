@@ -15,7 +15,7 @@ import java.util.List;
 public class EntityClassEntry {
     String name;
     String extend;
-    List<Component> components = new ArrayList<>();
+    List<ComponentEntry> components = new ArrayList<>();
 
 
     public String toString() {
@@ -27,8 +27,8 @@ public class EntityClassEntry {
             return out + "no components";
         }
         out += "components:\n";
-        for (Component c : components) {
-            out += "\t"+c.getClass().getName() +":"+ gson.toJson(c)+",\n";
+        for (ComponentEntry c : components) {
+            out += "\t"+c.compType.getClass().getName() +":"+ c.compType.toString()+",\n";
         }
         return out;
     }
