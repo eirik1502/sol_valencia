@@ -7,10 +7,7 @@ import engine.WorldContainer;
 import game.loaders.entity_loader.ComponentEntry;
 import game.loaders.entity_loader.ComponentInstanciationAdapter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by eirik on 23.11.2018.

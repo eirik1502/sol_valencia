@@ -12,7 +12,7 @@ import engine.utils.tickers.LinearTicker;
 import engine.window.Window;
 import game.GameUtils;
 import game.loaders.entity_loader.ColoredMeshCompInstAdapter;
-import game.loaders.entity_loader.Loader;
+import game.loaders.entity_loader.EntityClassLoader;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class Game {
 
     protected WorldContainer wc;
 
-    protected Loader loader;
+    protected EntityClassLoader loader;
 
     protected LinearTicker ticker;
 
@@ -49,7 +49,7 @@ public class Game {
         //createEntities(wc);
 
         //init loader
-        loader = new Loader();
+        loader = new EntityClassLoader();
 
         //set entity class custom initializers
         EntityClass.addComponentLoader(ColoredMeshComp.class, new ColoredMeshCompInstAdapter());
@@ -64,13 +64,13 @@ public class Game {
     }
 
     protected void createConfigEntities() {
-        String configPath = "configs/EntityClasses.JSON";
-        List<EntityClass> essences = loader.loadEssenceFromConfig(configPath);
+        String configPath = "configs/entityClasses.json";
+        List<EntityClass> essences = loader.LoadGameClasses(configPath);
         essences.forEach(e -> e.instanciate(wc));
 
-        int ent = essences.get(0).instanciate(wc);
-        PositionComp posComp = wc.getComponent(ent, PositionComp.class);
-        posComp.setX(100);
+//        int ent = essences.get(0).instanciate(wc);
+//        PositionComp posComp = wc.getComponent(ent, PositionComp.class);
+//        posComp.setX(100);
     }
 
     private void assignComponents(WorldContainer wc) {

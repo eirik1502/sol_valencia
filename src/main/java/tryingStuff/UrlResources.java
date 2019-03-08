@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class UrlResources {
 
     public static void main(String[] args) {
-        String location = "file:///C:/Users/eirik/OneDrive%20-%20NTNU/code_projects/sol_valencia/sol_editor/sol_editor/public/EntityClasses.JSON";
+        String location = "file:///C:/Users/eirik/OneDrive%20-%20NTNU/code_projects/sol_valencia/sol_editor/sol_editor/public/entityClasses.json";
 
         URI uri = null;
         URL url = null;

@@ -3,6 +3,7 @@ package game.loaders.entity_loader;
 
 import com.google.gson.*;
 import engine.Component;
+import engine.PositionComp;
 import game.offline.EntityClass;
 import utils.FileUtils;
 
@@ -11,13 +12,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * TODO: should not be able to load components if they have no no-arg constructor, and no custom loader
  *
  * Created by eirik on 23.11.2018.
  */
-public class Loader {
+public class EntityClassLoader {
 
-    private Gson defaultGson = new Gson();
+    private static Gson defaultGson = new Gson();
 
     /**
      * Loades essences from a given config.
@@ -28,35 +28,48 @@ public class Loader {
      * @param configFilename
      * @return
      */
-    public List<EntityClass> loadEssenceFromConfig(String configFilename) {
+    public static List<EntityClass> LoadGameClasses(String configFilename) {
         String configStr = FileUtils.loadAsString(configFilename);
         //System.out.println(configStr);
 
         Gson customGson = createCustomGsonLoader();
 
-        EntityClassEntry[] entityClassEntries = customGson.fromJson(configStr, EntityClassEntry[].class);
+        EntityClassEntry[] entityClassEntries;
+        try {
+            entityClassEntries = customGson.fromJson(configStr, EntityClassEntry[].class);
 
-        //handle extension
+            //if there is a json syntax error
+        } catch (JsonSyntaxException e) {
+            System.err.println("The json syntax was invalid in the file: " + configFilename
+                +"\n\t"+e.getLocalizedMessage());
+            return new ArrayList<>();
+        }
 
-        //System.out.println(Arrays.toString(configObjs));
+        //check if there is json data in the file, if not, return an emty array
+        if (entityClassEntries == null) {
+            System.err.println("There was no json data in the resource file: " + configFilename);
+            return new ArrayList<>();
+        }
 
-        List<EntityClass> essences =
-                Arrays.stream(entityClassEntries).map(entityClass ->
-                        new EntityClass(entityClass.name,entityClass.components)
+        return Arrays.stream(entityClassEntries)
+                .map(entityClassEntry -> new EntityClass(
+                        entityClassEntry.name,
+                        //filter invalid components
+                        entityClassEntry.components.stream().filter(ComponentEntry::isValid).collect(Collectors.toList())
+                        )
                 )
                 .collect(Collectors.toList());
-        return essences;
     }
 
     /**
      * Custom gson loader that handles constructor values, and custom componnt loaders.
      */
-    private Gson createCustomGsonLoader() {
+    private static Gson createCustomGsonLoader() {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
         JsonDeserializer<ComponentEntry> deserializer = (JsonElement json, Type typeOfT, JsonDeserializationContext context) -> {
             //component class
-            Class<? extends Component> compClass = null;
+            Class<? extends Component> compClass;
             //component initial arguments as json object
             JsonObject compArgs = null;
 
@@ -66,12 +79,20 @@ public class Loader {
             //type must be specified for orrect syntax
             String compType = jsonObj.get("type").getAsString();
 
+            Class<?> unknownCompClass;
             try {
-                compClass = (Class<? extends Component>)Class.forName(compType);
+                unknownCompClass = Class.forName(compType);
 
             } catch (ClassNotFoundException e) {
-                System.err.println("Parsing found "+compType+" that could not be interpreted.\n"+e.getCause());
-                return null;
+                System.err.println("Parser encountered a component that is of a nonexisting type: " + compType);
+                return new ComponentEntry(false);
+            }
+
+            try {
+                compClass = unknownCompClass.asSubclass(Component.class);
+            } catch (ClassCastException e) {
+                System.err.println("Parser encountered a component of a class that is not a Component: " + compType);
+                return new ComponentEntry(false);
             }
 
             JsonElement compArgEl = jsonObj.get("values");

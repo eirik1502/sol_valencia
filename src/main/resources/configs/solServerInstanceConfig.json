@@ -1,0 +1,17 @@
+{
+  "instance_name": "new-instance",
+  "clients": [
+    {
+      "address": "127.0.0.1",
+      "name": "Eirik",
+      "character": "frank"
+    },
+    {
+      "address": "127.0.0.1",
+      "name": "Harald",
+      "character": "schmathias"
+    }
+  ],
+  "map": "small",
+  "teams": [["Eirik"], ["Harald"]]
+}

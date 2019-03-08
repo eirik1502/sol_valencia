@@ -33,19 +33,31 @@ public class FileUtils {
         return FileUtils.class.getClassLoader().getResourceAsStream(filepath);
     }
 
-    public static String loadAsString(String file) {
+    public static String loadAsString(String filename) {
         StringBuilder result = new StringBuilder();
-        try {
-            InputStream rs = FileUtils.class.getClassLoader().getResourceAsStream(file);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(rs));
-            String buffer = "";
+        InputStream rs = FileUtils.class.getClassLoader().getResourceAsStream(filename);
+
+        //check if file exists
+        if (rs == null) {
+            System.err.println("Resource file could not be located: " + filename);
+            //Thread.dumpStack();
+            return "";
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(rs));
+        String buffer = "";
+
+        try {
             while ((buffer = reader.readLine()) != null) {
-                result.append(buffer + '\n');
+                result.append(buffer).append('\n');
             }
+
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Something went wrong while reading the resource file: " + filename);
+            //e.printStackTrace();
+            return "";
         }
         return result.toString();
     }

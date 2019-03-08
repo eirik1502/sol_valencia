@@ -21,7 +21,7 @@ public class tryLoading {
 //        Gson gson = new Gson();
 //        System.out.println(Arrays.toString(gson.fromJson(jsonInts, int[].class)));
 
-        String configStr = FileUtils.loadAsString("configs/EntityClasses.JSON");
+        String configStr = FileUtils.loadAsString("configs/entityClasses.json");
         //System.out.println(configStr);
 
         //build our own gson
