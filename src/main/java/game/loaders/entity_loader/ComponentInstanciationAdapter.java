@@ -9,6 +9,6 @@ import engine.Component;
  *
  * Created by eirik on 23.11.2018.
  */
-public interface CustomComponentLoader {
+public interface ComponentInstanciationAdapter {
     Component load(JsonObject compArgs);
 }
