@@ -1,12 +1,8 @@
-package game.loaders;
+package game.loaders.entity_loader;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonToken;
-import engine.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

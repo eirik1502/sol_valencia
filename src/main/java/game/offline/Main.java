@@ -1,10 +1,10 @@
 package game.offline;
 
-import game.offline.Game;
-
 public class Main {
 
     public static void main(String[] args) {
+//        GameInstanceLoader gameLoader = new GameInstanceLoader();
+//        Game game = gameLoader.load("");
 
         DevGame g = new DevGame();
         g.init();

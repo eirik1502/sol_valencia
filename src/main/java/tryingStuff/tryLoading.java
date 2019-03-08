@@ -3,7 +3,7 @@ package tryingStuff;
 import com.google.gson.*;
 import engine.Component;
 import engine.PositionComp;
-import game.loaders.EntityClassEntry;
+import game.loaders.entity_loader.EntityClassEntry;
 import utils.FileUtils;
 
 import java.lang.reflect.Type;

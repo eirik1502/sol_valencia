@@ -1,4 +1,4 @@
-package game.loaders;
+package game.loaders.entity_loader;
 
 import com.google.gson.JsonObject;
 import engine.Component;
