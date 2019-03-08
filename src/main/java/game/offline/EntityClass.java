@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import engine.Component;
 import engine.WorldContainer;
-import game.loaders.ComponentEntry;
-import game.loaders.CustomComponentLoader;
+import game.loaders.entity_loader.ComponentEntry;
+import game.loaders.entity_loader.ComponentInstanciationAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import java.util.Map;
 public class EntityClass {
 
     private static Gson defaultGson = new Gson();
-    private static Map<Class<? extends Component>, CustomComponentLoader> customCompLoaders = new HashMap<>();
-    public static void addComponentLoader(Class<? extends Component> compType, CustomComponentLoader customLoader) {
+    private static Map<Class<? extends Component>, ComponentInstanciationAdapter> customCompLoaders = new HashMap<>();
+    public static void addComponentLoader(Class<? extends Component> compType, ComponentInstanciationAdapter customLoader) {
         EntityClass.customCompLoaders.put(compType, customLoader);
     }
 

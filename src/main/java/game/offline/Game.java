@@ -11,8 +11,8 @@ import engine.physics.*;
 import engine.utils.tickers.LinearTicker;
 import engine.window.Window;
 import game.GameUtils;
-import game.loaders.ColoredMeshCompLoader;
-import game.loaders.Loader;
+import game.loaders.entity_loader.ColoredMeshCompInstAdapter;
+import game.loaders.entity_loader.Loader;
 
 import java.util.List;
 
@@ -50,7 +50,9 @@ public class Game {
 
         //init loader
         loader = new Loader();
-        EntityClass.addComponentLoader(ColoredMeshComp.class, new ColoredMeshCompLoader());
+
+        //set entity class custom initializers
+        EntityClass.addComponentLoader(ColoredMeshComp.class, new ColoredMeshCompInstAdapter());
 
         createConfigEntities();
 
