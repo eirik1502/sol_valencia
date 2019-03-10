@@ -7,17 +7,20 @@ import engine.graphics.*;
 import engine.graphics.text.Font;
 import engine.graphics.text.FontType;
 import engine.graphics.view_.View;
+import engine.graphics_module.GraphicsModule;
+import engine.graphics_module.GraphicsModuleConfig;
 import engine.physics.*;
 import engine.utils.tickers.LinearTicker;
 import engine.window.Window;
 import game.GameUtils;
 import game.loaders.entity_loader.ColoredMeshCompInstAdapter;
-import game.loaders.entity_loader.EntityClassLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Created by eirik on 13.06.2017.
@@ -29,52 +32,86 @@ public class Game {
 
     protected Window window;
     protected UserInput userInput;
+    protected LinearTicker ticker;
 
     protected WorldContainer wc;
 
-    protected LinearTicker ticker;
+    protected List<EngineModuleConfig> moduleConfigs = new ArrayList<>();
+    protected Map<Class<? extends EngineModule>, EngineModule> modulesByName = new HashMap<>();
 
-    protected String configPath = "configs/entityClasses.json";
-
+    protected List<Class<? extends Sys>> systems = new ArrayList<>();
     protected Map<String, EntityClass> entityClasses = new HashMap<>();
     protected List<EntityConstructor> initialEntities = new ArrayList<>();
 
 
     public Game() {
-        this(new ArrayList<>(), new ArrayList<>());
+        this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
-    public Game(List<EntityClass> entityClasses, List<EntityConstructor> initialEntities) {
+    public Game(List<Class<? extends Sys>> componentSystems, List<EntityClass> entityClasses, List<EntityConstructor> initialEntities) {
+        systems.addAll(componentSystems);
         entityClasses.forEach(ec -> this.entityClasses.put(ec.name, ec));
         this.initialEntities.addAll(initialEntities);
 
         wc = new WorldContainer( new View(GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT) );
+        wc.setGame(this);
+    }
+
+    private void setUp() {
+        GraphicsModuleConfig gmc = new GraphicsModuleConfig();
+        gmc.windowHeight = 0.5f;
+        gmc.windowWidth = 0.5f;
+        moduleConfigs.add(gmc);
     }
 
     public void init() {
+        setUp();
 
-        window = new Window(0.8f, 0.8f,"SIIII");
-        userInput = new UserInput(window, GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT);
+        moduleConfigs.forEach(mc -> {
+            EngineModule module = null;
+            try {
+                module = mc.moduleType.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+            modulesByName.put(mc.moduleType, module);
+
+            //init modules
+            module.init(mc);
+        });
+
+        //        window = new Window(0.8f, 0.8f,"SIIII");
+//        userInput = new UserInput(window, GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT);
 
         Font.loadFonts(FontType.BROADWAY);
         //AudioMaster.init();
 
 
-        //List<EntityClass> entityClasses = EntityClassLoader.LoadEntityClasses(configPath);
+        //set for compatability reasons
+        this.window = getModule(GraphicsModule.class).getWindow();
+        this.userInput = getModule(GraphicsModule.class).getUserInput();
 
         //assign cmponents
         entityClasses.values().stream()
                 .flatMap(ec -> ec.getComponentClasses().stream())
                 .forEach(compClass -> wc.assignComponentType(compClass));
 
-        //assignComponents(wc);
-        addSystems(wc);
-        //createEntities(wc);
+        //init systems
+        systems.forEach(s -> {
+            Sys sys;
+            try {
+                sys = s.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                return;
+            }
+            wc.addSystem(sys);
+        });
+        //addSystems(wc);
 
         //set entity class custom initializers
         EntityClass.addComponentLoader(ColoredMeshComp.class, new ColoredMeshCompInstAdapter());
-
-        //createConfigEntities();
 
         initialEntities.forEach(eConstr -> {
             EntityClass ec = entityClasses.get(eConstr.getEntityClassName());
@@ -84,8 +121,14 @@ public class Game {
         System.out.println("HEELLLLLOOOOO");
         System.out.println(wc);
 
+
         ticker = new LinearTicker(FRAME_INTERVAL);
         ticker.setListener(this::update);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends EngineModule> T getModule(Class<T> moduleType) {
+        return (T)this.modulesByName.get(moduleType);
     }
 
     protected void createConfigEntities() {
@@ -105,12 +148,12 @@ public class Game {
     }
     private void addSystems(WorldContainer wc) {
         wc.addSystem(new PlayerControlBotSys());
-        wc.addSystem(new UserMovementInputSys(userInput));
+        wc.addSystem(new UserMovementInputSys());
         wc.addSystem(new MovementControlSys());
         wc.addSystem(new CollisionDetectionSys());
         wc.addSystem(new NaturalResolutionSys());
 
-        wc.addSystem(new RenderSys(window));
+        wc.addSystem(new RenderSys());
 
     }
 
@@ -135,16 +178,16 @@ public class Game {
     protected void onTerminate() {
 
         wc.terminate();
-        window.close();
     }
 
 
     protected void stopIfRequested() {
-        if (window.shouldClosed() || userInput.isKeyboardPressed(UserInput.KEY_ESCAPE))
+        GraphicsModule graphicsModule = getModule(GraphicsModule.class);
+        if (graphicsModule.getWindow().shouldClosed() || graphicsModule.getUserInput().isKeyboardPressed(UserInput.KEY_ESCAPE))
             stop();
     }
     protected void pollEvents() {
-        window.pollEvents();
+        getModule(GraphicsModule.class).getWindow().pollEvents();
     }
     protected void updateEngine() {
         wc.updateSystems();

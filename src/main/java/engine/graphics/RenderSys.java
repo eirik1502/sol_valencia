@@ -7,6 +7,7 @@ import engine.Sys;
 import engine.WorldContainer;
 import engine.combat.abilities.ProjectileComp;
 import engine.graphics.text.*;
+import engine.graphics_module.GraphicsModule;
 import engine.visualEffect.VisualEffect;
 import engine.visualEffect.VisualEffectComp;
 import engine.visualEffect.VisualEffectSys;
@@ -44,6 +45,9 @@ public class RenderSys implements Sys {
     private WorldContainer wc;
 
 
+    public RenderSys() {
+        this(null);
+    }
 
     public RenderSys(Window window) {
         this.window = window;
@@ -56,6 +60,7 @@ public class RenderSys implements Sys {
     @Override
     public void setWorldContainer(WorldContainer wc) {
         this.wc = wc;
+        this.window = wc.getGame().getModule(GraphicsModule.class).getWindow();
     }
 
 

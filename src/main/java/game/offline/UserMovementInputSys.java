@@ -3,6 +3,7 @@ package game.offline;
 import engine.Sys;
 import engine.UserInput;
 import engine.WorldContainer;
+import engine.graphics_module.GraphicsModule;
 
 /**
  * Created by eirik on 16.11.2018.
@@ -13,13 +14,13 @@ public class UserMovementInputSys implements Sys {
     private UserInput userInput;
 
 
-    public UserMovementInputSys(UserInput userInput) {
-        this.userInput = userInput;
+    public UserMovementInputSys() {
     }
 
     @Override
     public void setWorldContainer(WorldContainer wc) {
         this.wc = wc;
+        this.userInput = wc.getGame().getModule(GraphicsModule.class).getUserInput();
     }
 
     @Override

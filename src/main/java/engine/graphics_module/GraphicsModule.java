@@ -24,8 +24,16 @@ public class GraphicsModule extends EngineModule {
 
     }
 
+    @Override
+    public void terminate() {
+        window.close();
+    }
+
     public Window getWindow() {
         return this.window;
+    }
+    public UserInput getUserInput() {
+        return userInput;
     }
 
     public void render(String texture) {

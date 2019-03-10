@@ -32,7 +32,13 @@
     }
   ],
   "componentSystems": [
+    "game.offline.PlayerControlBotSys",
+    "game.offline.UserMovementInputSys",
+    "game.offline.MovementControlSys",
+    "engine.physics.CollisionDetectionSys",
+    "engine.physics.NaturalResolutionSys",
 
+    "engine.graphics.RenderSys"
   ],
 
   "entityClasses": [

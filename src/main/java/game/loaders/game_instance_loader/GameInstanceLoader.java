@@ -3,6 +3,7 @@ package game.loaders.game_instance_loader;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import engine.PositionComp;
+import engine.Sys;
 import game.loaders.entity_loader.EntityClassEntry;
 import game.loaders.entity_loader.EntityClassLoader;
 import game.loaders.initial_entities_loader.InitialEntitiesLoader;
@@ -20,6 +21,7 @@ public class GameInstanceLoader {
 
     private List<EntityClass> entityClasses;
     private List<EntityConstructor> initialEntities;
+    private List<Class<? extends Sys>> componentSystems;
 
 
     public Game load(String configFilename) {
@@ -44,10 +46,22 @@ public class GameInstanceLoader {
         }
 
         entityClasses = EntityClassLoader.LoadEntityClasses(instConf.entityClasses);
-
         initialEntities = InitialEntitiesLoader.Load(instConf.initialEntities);
+        componentSystems = instConf.componentSystems.stream()
+                .map(sName -> {
+                    Class<? extends Sys> sysClass;
+                    try {
+                        Class<?> sysClassGeneral = Class.forName(sName);
+                        sysClass = sysClassGeneral.asSubclass(Sys.class);
+                    } catch (ClassNotFoundException e) {
+                        System.err.println("Loader ecnoutered system that could not be located: " + sName);
+                        return null;
+                    }
+                    return sysClass;
+                })
+                .filter(Objects::nonNull) //remove invalid systems
+                .collect(Collectors.toList());
 
-        System.out.println(initialEntities);
 
         Set<String> loadedEntityClassNames = entityClasses.stream().map(ec -> ec.name).collect(Collectors.toSet());
 
@@ -62,7 +76,7 @@ public class GameInstanceLoader {
                 })
                 .collect(Collectors.toList());
 
-        return new Game(entityClasses, initialEntities);
+        return new Game(componentSystems, entityClasses, initialEntities);
     }
 
 }

@@ -41,8 +41,6 @@ public class EntityConstructor {
                 .filter(entry -> {
                     boolean entityHasComp = world.hasComponent(entity, entry.getKey());
 
-                    System.out.println(entry);
-
                     if (!entityHasComp)
                         System.err.println("EntityConstructor encountered component to be constructed that was not in the given entity" +
                                 "\n\tentity: " + world.getEntityName(entity) + " component: " + entry.getKey().getName());

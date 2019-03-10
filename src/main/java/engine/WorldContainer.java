@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.google.gson.Gson;
 import engine.graphics.view_.View;
 import game.GameUtils;
+import game.offline.Game;
 
 /**
  * Created by eirik on 13.06.2017.
@@ -37,6 +38,7 @@ public class WorldContainer {
 
     private View view; //a view_ into the world
 
+    private Game game;
 
 
     public WorldContainer(View view) {
@@ -54,6 +56,13 @@ public class WorldContainer {
     @Deprecated
     public WorldContainer() {
         view = new View(GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT);
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+    public Game getGame() {
+        return game;
     }
 
     //---------VIEW

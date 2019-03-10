@@ -22,8 +22,6 @@ public class GsonComponentConstructor implements ComponentConstructor<Component>
 
     @Override
     public void modifyInitially(Component comp) {
-
-        System.out.println("constructor called for");
         populate(this.args, comp);
     }
 
