@@ -9,9 +9,9 @@ import java.util.List;
  * Created by eirik on 23.11.2018.
  */
 public class EntityClassEntry {
-    String name;
-    String extend;
-    List<ComponentEntry> components = new ArrayList<>();
+    public String name;
+    public String extend;
+    public List<ComponentEntry> components = new ArrayList<>();
 
 
     public String toString() {

@@ -13,7 +13,7 @@ public class ColoredMeshCompInstAdapter implements ComponentInstanciationAdapter
     @Override
     public Component load(JsonObject compArgs) {
         float radius = compArgs.get("radius").getAsFloat();
-        int sides = compArgs.get("radius").getAsInt();
+        int sides = compArgs.get("sides").getAsInt();
 
         ColoredMeshComp colMeshComp = new ColoredMeshComp(ColoredMeshUtils.createCircleTwocolor(radius, sides));
 

@@ -161,10 +161,12 @@ public class WorldContainer {
      * @return
      */
     public Set<Integer> getEntitiesWithComponentType(Class<? extends Component> compType) {
-        return activeComponents.get(compType).keySet();
+        return activeComponents.containsKey(compType)
+                ? activeComponents.get(compType).keySet()
+                : new HashSet<>(0);
     }
     public Stream<Integer> entitiesOfComponentTypeStream(Class<? extends Component> compType) {
-        return activeComponents.get(compType).keySet().stream();
+        return getEntitiesWithComponentType(compType).stream();
     }
 
     private int retrieveEntityId() {
@@ -286,9 +288,10 @@ public class WorldContainer {
     }
 
     public Map<Integer, Component> getComponentsOfType(Class<? extends Component> compType) {
-        validateComponentType(compType);
-
-        return activeComponents.get(compType);
+        //validateComponentType(compType);
+        return activeComponents.containsKey(compType)
+                ? activeComponents.get(compType)
+                : new HashMap<>();
     }
     public Map<Integer, Component> getInactiveComponentsOfType(Class<? extends Component> compType) {
         validateComponentType(compType);
@@ -392,9 +395,13 @@ public class WorldContainer {
 
     @Override
     public String toString() {
-        String s =
-                "/////////////////////////////////////////////////\n"+
+        String s = "/////////////////////////////////////////////////\n"+
                 "////////// The mighty World Container! //////////\n"+
+                "\nAssigned components:\n"+
+                Stream.concat(activeComponents.keySet().stream(), inactiveComponents.keySet().stream())
+                        .distinct()
+                    .map(Class::getSimpleName)
+                    .reduce("", (res, el) -> res + el+ "\n") +
                 "\n"+
                 systemsToString()+
                 "\n"+

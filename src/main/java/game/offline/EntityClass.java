@@ -8,6 +8,7 @@ import game.loaders.entity_loader.ComponentEntry;
 import game.loaders.entity_loader.ComponentInstanciationAdapter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by eirik on 23.11.2018.
@@ -16,12 +17,15 @@ public class EntityClass {
 
     private static Gson defaultGson = new Gson();
     private static Map<Class<? extends Component>, ComponentInstanciationAdapter> customCompLoaders = new HashMap<>();
+
     public static void addComponentLoader(Class<? extends Component> compType, ComponentInstanciationAdapter customLoader) {
         EntityClass.customCompLoaders.put(compType, customLoader);
     }
 
-    private final String name;
-    private final List<ComponentEntry> componentEntries = new ArrayList<>();
+
+
+    public final String name;
+    public final List<ComponentEntry> componentEntries = new ArrayList<>();
     //public final List<Component> components = new ArrayList<>();
 
     public EntityClass(String name) {
@@ -32,10 +36,26 @@ public class EntityClass {
         this.componentEntries.addAll(componentEntries);
     }
 
+    /**
+     * Instanciate with the given constructor
+     * Constructor may not be applied to custom initializers.
+     */
+    public int instanciate(WorldContainer world, EntityConstructor constructor) {
+        int entity = instanciate(world);
+
+        constructor.construct(world, entity);
+
+        return entity;
+    }
+
     public int instanciate(WorldContainer wc) {
         int e = wc.createEntity(name);
         componentEntries.forEach(compEntry -> wc.addComponent(e, componentOf(compEntry)));
         return e;
+    }
+
+    public List<Class<? extends Component>> getComponentClasses() {
+        return this.componentEntries.stream().map(ce -> ce.compType).collect(Collectors.toList());
     }
 
     /**
@@ -54,9 +74,7 @@ public class EntityClass {
             //no values given, default constructor
             try {
                 comp = compClass.newInstance();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
+            } catch (IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
         }
@@ -73,4 +91,5 @@ public class EntityClass {
 
         return comp;
     }
+
 }

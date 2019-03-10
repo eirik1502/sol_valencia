@@ -1,14 +1,20 @@
 package game.offline;
 
+import game.loaders.game_instance_loader.GameInstanceLoader;
+
 public class Main {
 
     public static void main(String[] args) {
-//        GameInstanceLoader gameLoader = new GameInstanceLoader();
-//        Game game = gameLoader.load("");
+        GameInstanceLoader instLoader = new GameInstanceLoader();
+        Game game = instLoader.load("configs/gameInstanceConfig.json");
 
-        DevGame g = new DevGame();
-        g.init();
-        g.start();
+        game.init();
+        game.start();
+
+//        DevGame g = new DevGame();
+//        g.init();
+//        g.start();
+
 //        Game_old g = new Game_old();
 //        g.init();
 //        g.start();

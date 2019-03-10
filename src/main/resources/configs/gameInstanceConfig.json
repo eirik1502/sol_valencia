@@ -1,0 +1,65 @@
+{
+  "modules": [
+    "graphics"
+  ],
+  "initialEntities": [
+    {
+      "name": "player",
+      "components": [
+        {
+          "type": "engine.PositionComp",
+          "values": {
+            "x": 100,
+            "Y": 100
+          }
+        }
+      ]
+    },
+    {
+      "name": "player"
+    },
+    {
+      "name": "player",
+      "components": [
+        {
+          "type": "engine.PositionComp",
+          "values":{
+            "x": 500,
+            "y": 500
+          }
+        }
+      ]
+    }
+  ],
+  "componentSystems": [
+
+  ],
+
+  "entityClasses": [
+    {
+      "name": "player",
+      "components": [
+        {
+          "type": "engine.PositionComp",
+          "values": {
+            "x": 1000,
+            "y": 250
+          }
+        },
+        {
+          "type": "engine.graphics.ColoredMeshComp",
+          "values": {
+            "radius": 10,
+            "sides": 8
+          }
+        },
+
+        {"type":"game.offline.PlayerControlBotComp"},
+        {"type":"game.offline.MovementControlComp", "values":{"speed":2}},
+        {"type":"game.offline.MovementInputComp"},
+
+        {"type":"engine.physics.PhysicsComp"}
+      ]
+    }
+  ]
+}

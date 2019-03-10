@@ -18,44 +18,62 @@ import java.util.stream.Collectors;
 public class EntityClassLoader {
 
     private static Gson defaultGson = new Gson();
+    private static JsonParser jsonParser = new JsonParser();
 
-    /**
-     * Loades essences from a given config.
-     * Uses assigned custom component loaders to map config values to component variables,
-     * or if no custom loader is goven for a component,
-     * assumes component values in config exactly matches components variables.
-     *
-     * @param configFilename
-     * @return
-     */
-    public static List<EntityClass> LoadGameClasses(String configFilename) {
-        String configStr = FileUtils.loadAsString(configFilename);
-        //System.out.println(configStr);
 
+    private static List<EntityClassEntry> LoadEntityClassEntries(JsonElement entityClassesElem) {
         Gson customGson = createCustomGsonLoader();
 
         EntityClassEntry[] entityClassEntries;
+        entityClassEntries = customGson.fromJson(entityClassesElem, EntityClassEntry[].class);
+        return new ArrayList<>(Arrays.asList(entityClassEntries));
+    }
+
+    /**
+     * Extracts EntityClasses from the json entity classes json file, given the filename,
+     * if the file containes valid json syntax
+     *
+     * @return The list of EntityClass'es loaded or an empty array if something went wrong.
+     */
+    public static List<EntityClass> LoadEntityClasses(String configFilename) {
+        JsonElement entityClassesElem;
+
+        String entityClassJson = FileUtils.loadAsString(configFilename);
+
         try {
-            entityClassEntries = customGson.fromJson(configStr, EntityClassEntry[].class);
+            entityClassesElem = jsonParser.parse(entityClassJson);
 
             //if there is a json syntax error
         } catch (JsonSyntaxException e) {
             System.err.println("The json syntax was invalid in the file: " + configFilename
-                +"\n\t"+e.getLocalizedMessage());
+                    +"\n\t"+e.getLocalizedMessage());
+
             return new ArrayList<>();
         }
 
         //check if there is json data in the file, if not, return an emty array
-        if (entityClassEntries == null) {
+        if (entityClassesElem == null) {
             System.err.println("There was no json data in the resource file: " + configFilename);
             return new ArrayList<>();
         }
 
-        return Arrays.stream(entityClassEntries)
+        return LoadEntityClasses(entityClassesElem);
+    }
+
+    /**
+     * Extracts EntityCLasses from the given JsonElement
+     */
+    public static List<EntityClass> LoadEntityClasses(JsonElement entityClassesElem) {
+
+        List<EntityClassEntry> entityClassEntries = LoadEntityClassEntries(entityClassesElem);
+
+        return entityClassEntries.stream()
                 .map(entityClassEntry -> new EntityClass(
                         entityClassEntry.name,
                         //filter invalid components
-                        entityClassEntry.components.stream().filter(ComponentEntry::isValid).collect(Collectors.toList())
+                        entityClassEntry.components.stream()
+                                .filter(ComponentEntry::isValid)
+                                .collect(Collectors.toList())
                         )
                 )
                 .collect(Collectors.toList());

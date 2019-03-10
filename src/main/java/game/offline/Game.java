@@ -14,7 +14,10 @@ import game.GameUtils;
 import game.loaders.entity_loader.ColoredMeshCompInstAdapter;
 import game.loaders.entity_loader.EntityClassLoader;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by eirik on 13.06.2017.
@@ -29,32 +32,54 @@ public class Game {
 
     protected WorldContainer wc;
 
-    protected EntityClassLoader loader;
-
     protected LinearTicker ticker;
 
+    protected String configPath = "configs/entityClasses.json";
 
+    protected Map<String, EntityClass> entityClasses = new HashMap<>();
+    protected List<EntityConstructor> initialEntities = new ArrayList<>();
+
+
+    public Game() {
+        this(new ArrayList<>(), new ArrayList<>());
+    }
+
+    public Game(List<EntityClass> entityClasses, List<EntityConstructor> initialEntities) {
+        entityClasses.forEach(ec -> this.entityClasses.put(ec.name, ec));
+        this.initialEntities.addAll(initialEntities);
+
+        wc = new WorldContainer( new View(GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT) );
+    }
 
     public void init() {
+
         window = new Window(0.8f, 0.8f,"SIIII");
         userInput = new UserInput(window, GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT);
 
         Font.loadFonts(FontType.BROADWAY);
         //AudioMaster.init();
 
-        wc = new WorldContainer( new View(GameUtils.VIEW_WIDTH, GameUtils.VIEW_HEIGHT) );
 
-        assignComponents(wc);
+        //List<EntityClass> entityClasses = EntityClassLoader.LoadEntityClasses(configPath);
+
+        //assign cmponents
+        entityClasses.values().stream()
+                .flatMap(ec -> ec.getComponentClasses().stream())
+                .forEach(compClass -> wc.assignComponentType(compClass));
+
+        //assignComponents(wc);
         addSystems(wc);
         //createEntities(wc);
-
-        //init loader
-        loader = new EntityClassLoader();
 
         //set entity class custom initializers
         EntityClass.addComponentLoader(ColoredMeshComp.class, new ColoredMeshCompInstAdapter());
 
-        createConfigEntities();
+        //createConfigEntities();
+
+        initialEntities.forEach(eConstr -> {
+            EntityClass ec = entityClasses.get(eConstr.getEntityClassName());
+            ec.instanciate(wc, eConstr);
+        });
 
         System.out.println("HEELLLLLOOOOO");
         System.out.println(wc);
@@ -64,9 +89,7 @@ public class Game {
     }
 
     protected void createConfigEntities() {
-        String configPath = "configs/entityClasses.json";
-        List<EntityClass> essences = loader.LoadGameClasses(configPath);
-        essences.forEach(e -> e.instanciate(wc));
+
 
 //        int ent = essences.get(0).instanciate(wc);
 //        PositionComp posComp = wc.getComponent(ent, PositionComp.class);
