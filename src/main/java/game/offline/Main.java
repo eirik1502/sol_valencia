@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        DevGame g = new DevGame();
+        Game g = new Game();
         g.init();
         g.start();
 //        Game_old g = new Game_old();
