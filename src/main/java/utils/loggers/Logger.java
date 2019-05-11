@@ -25,6 +25,13 @@ public class Logger {
     }
     public Logger(String logname, boolean uniquePerRun) {
         String logDirName = "./logs/";
+
+        int dirEnd = logname.lastIndexOf('/');
+        if (dirEnd != -1) {
+            logDirName += logname.substring(0, dirEnd+1);
+            logname = logname.substring(dirEnd+1);
+        }
+
         File logDir = new File(logDirName);
         if (!logDir.exists())
             logDir.mkdir();

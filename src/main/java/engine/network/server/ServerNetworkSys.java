@@ -12,6 +12,7 @@ import engine.combat.abilities.HitboxComp;
 import engine.combat.abilities.ProjectileComp;
 import engine.network.*;
 import engine.network.networkPackets.*;
+import engine.network.packet_logging.PacketLogger;
 import engine.physics.AffectedByHoleComp;
 import game.server.ServerClientHandler;
 import game.server.ServerGameDataComp;
@@ -30,11 +31,15 @@ public class ServerNetworkSys implements Sys {
 
     private List<ServerClientHandler> clientHandlers;
 
+    private PacketLogger inPacketLogger, outPacketLogger;
 
 
     public ServerNetworkSys(List<ServerClientHandler> clientHandlers) {
 
         this.clientHandlers = clientHandlers;
+
+        this.inPacketLogger = new PacketLogger("game_state_logs/client_input");
+        this.outPacketLogger = new PacketLogger("game_state_logs/game_state");
 
     }
 
@@ -80,9 +85,12 @@ public class ServerNetworkSys implements Sys {
             //data from clients
             CharacterInputData inData = clientHandlers.get(i).getInputData();
 
+
             if (inData != null) {
                 //System.out.println("Got input data: "+inData);
                 writeInDataToComp(inData, inpComp);
+
+                inPacketLogger.logClientInput(frameNumber, i, inData);
             }
 
             i++;
@@ -91,7 +99,8 @@ public class ServerNetworkSys implements Sys {
 
     private void sendGameDataToClients() {
 
-        sendCharacterData( retrieveCharacterData() );
+        AllCharacterStateData charactersStateData = retrieveCharacterData();
+        sendCharacterData( charactersStateData );
 
         retrieveAbilitiesStarted().forEach(abStarted -> sendAbilityStarted(abStarted) );
 
@@ -99,9 +108,14 @@ public class ServerNetworkSys implements Sys {
 
         retrieveDeadProjectiles().forEach(deadProj -> sendProjectileDead(deadProj) );
 
-        retrieveDeadEntities().forEach(deadEntity -> sendEntityDead(deadEntity));
+        List<EntityDeadData> deadEntities = retrieveDeadEntities();
+        deadEntities.forEach(deadEntity -> sendEntityDead(deadEntity));
 
         retrieveGameOver().forEach(gameOver -> sendGameOver(gameOver));
+
+        //log data
+        outPacketLogger.logCharactersState(frameNumber, charactersStateData);
+        deadEntities.forEach(de -> outPacketLogger.logDeadEntity(frameNumber, de));
     }
 
 

@@ -33,4 +33,8 @@ public class EntityDeadData {
     public String toString() {
         return "["+getClass().getSimpleName()+": entityId="+entityId+"]";
     }
+
+    public String serialize() {
+        return ""+entityId;
+    }
 }

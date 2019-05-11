@@ -1,11 +1,16 @@
 package engine.network.networkPackets;
 
+import engine.network.NetworkUtils;
+import utils.Parse;
+
 /**
  * Created by eirik on 21.06.2017.
  */
 public class CharacterInputData {
 
+    public static final int PACKET_ID = NetworkUtils.CLIENT_CHARACTER_INPUT;
     public static final int BYTES = Float.BYTES*2 + 1 * 7; //a boolean is sent as one byte with the dataStreams
+
 
     private boolean moveLeft, moveRight, moveUp, moveDown;
 
@@ -116,5 +121,19 @@ public class CharacterInputData {
     @Override
     public String toString() {
         return "[CharacterInputData: moveLeft="+moveLeft+" moveRight="+moveRight+" moveUp="+moveUp+" moveDown="+moveDown+" action1="+action1+" action2="+action2+" aimX="+aimX+" aimY="+aimY+"]";
+    }
+
+    public String serialize() {
+        return ""
+                +PACKET_ID + ' '
+                +Parse.boolToBinChar(moveLeft)+' '
+                +Parse.boolToBinChar(moveRight)+' '
+                +Parse.boolToBinChar(moveUp)+' '
+                +Parse.boolToBinChar(moveDown)+' '
+                +Parse.boolToBinChar(action1)+' '
+                +Parse.boolToBinChar(action2)+' '
+                +Parse.boolToBinChar(action3)+' '
+                +aimX+' '
+                +aimY;
     }
 }

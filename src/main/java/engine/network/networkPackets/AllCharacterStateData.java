@@ -1,14 +1,19 @@
 package engine.network.networkPackets;
 
 import engine.network.NetworkUtils;
+import utils.StringUtils;
 
 import java.util.Arrays;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Created by eirik on 21.06.2017.
  */
 public class AllCharacterStateData {
 
+    public static final int PACKET_ID = NetworkUtils.SERVER_CHARACTER_STATE_ID;
 
 //    public static final int BYTES = Integer.BYTES + Float.BYTES*3 * NetworkUtils.CHARACTER_NUMB;
 
@@ -61,5 +66,17 @@ public class AllCharacterStateData {
     @Override
     public String toString() {
         return "[AllCharacterStateData: x="+ Arrays.toString(x)+" y="+Arrays.toString(y)+" rotation="+Arrays.toString(rotation)+"]";
+    }
+
+    public String serialize() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(PACKET_ID).append(' ');
+        IntStream.range(0, x.length).forEach(i -> sb.append(x[i]).append(','));
+        sb.append(' ');
+        IntStream.range(0, y.length).forEach(i -> sb.append(y[i]).append(','));
+        sb.append(' ');
+        IntStream.range(0, rotation.length).forEach(i -> sb.append(rotation[i]).append(','));
+
+        return sb.toString();
     }
 }
