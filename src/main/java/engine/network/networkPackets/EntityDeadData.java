@@ -1,9 +1,11 @@
 package engine.network.networkPackets;
 
+import engine.network.NetworkUtils;
+
 /**
  * Created by eirik on 07.07.2017.
  */
-public class EntityDeadData {
+public class EntityDeadData implements NetworkPacket{
 
     public static final int BYTES = Integer.BYTES;
 
@@ -32,6 +34,11 @@ public class EntityDeadData {
 
     public String toString() {
         return "["+getClass().getSimpleName()+": entityId="+entityId+"]";
+    }
+
+    @Override
+    public int getPacketId() {
+        return NetworkUtils.SERVER_CHARACTER_DEAD_ID;
     }
 
     public String serialize() {

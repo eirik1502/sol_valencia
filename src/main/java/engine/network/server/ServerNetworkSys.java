@@ -13,12 +13,11 @@ import engine.combat.abilities.ProjectileComp;
 import engine.network.*;
 import engine.network.networkPackets.*;
 import engine.network.packet_logging.PacketLogger;
-import engine.physics.AffectedByHoleComp;
 import game.server.ServerClientHandler;
 import game.server.ServerGameDataComp;
-import game.server.ServerIngame;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by eirik on 21.06.2017.
@@ -31,16 +30,16 @@ public class ServerNetworkSys implements Sys {
 
     private List<ServerClientHandler> clientHandlers;
 
-    private PacketLogger inPacketLogger, outPacketLogger;
+    private PacketLogger packetLogger;
+
+    boolean firstUpdate = true;
 
 
     public ServerNetworkSys(List<ServerClientHandler> clientHandlers) {
 
         this.clientHandlers = clientHandlers;
 
-        this.inPacketLogger = new PacketLogger("game_state_logs/client_input");
-        this.outPacketLogger = new PacketLogger("game_state_logs/game_state");
-
+        this.packetLogger = new PacketLogger("game_state_logs/server-packets");
     }
 
 
@@ -51,6 +50,15 @@ public class ServerNetworkSys implements Sys {
 
     @Override
     public void update() {
+        if (firstUpdate) {
+            firstUpdate = false;
+
+            // log character entities
+            String charEntities = wc.entitiesOfComponentTypeStream(CharacterComp.class)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(" "));
+            packetLogger.log("character_entities " + charEntities);
+        }
 
         //poll client network input
         clientHandlers.forEach(client -> {
@@ -67,7 +75,7 @@ public class ServerNetworkSys implements Sys {
 
     @Override
     public void terminate() {
-
+        packetLogger.close();
     }
 
 
@@ -90,7 +98,8 @@ public class ServerNetworkSys implements Sys {
                 //System.out.println("Got input data: "+inData);
                 writeInDataToComp(inData, inpComp);
 
-                inPacketLogger.logClientInput(frameNumber, i, inData);
+                inData.clientId = i;
+                packetLogger.logPacket(frameNumber, inData);
             }
 
             i++;
@@ -99,23 +108,29 @@ public class ServerNetworkSys implements Sys {
 
     private void sendGameDataToClients() {
 
+        // retrieve state data
         AllCharacterStateData charactersStateData = retrieveCharacterData();
-        sendCharacterData( charactersStateData );
-
-        retrieveAbilitiesStarted().forEach(abStarted -> sendAbilityStarted(abStarted) );
-
-        retrieveHitsDetected().forEach(hitsDetected -> sendHitDetected(hitsDetected) );
-
-        retrieveDeadProjectiles().forEach(deadProj -> sendProjectileDead(deadProj) );
-
+        List<AbilityStartedData> abilitiesStarted = retrieveAbilitiesStarted();
+        List<HitDetectedData> hitsDetected = retrieveHitsDetected();
+        List<ProjectileDeadData> projectilesDead = retrieveDeadProjectiles();
         List<EntityDeadData> deadEntities = retrieveDeadEntities();
+        List<GameOverData> gameOvers = retrieveGameOver();
+
+        // send state data to clients
+        sendCharacterData( charactersStateData );
+        abilitiesStarted.forEach(abStarted -> sendAbilityStarted(abStarted) );
+        hitsDetected.forEach(hitDetected -> sendHitDetected(hitDetected) );
+        projectilesDead.forEach(deadProj -> sendProjectileDead(deadProj) );
         deadEntities.forEach(deadEntity -> sendEntityDead(deadEntity));
+        gameOvers.forEach(gameOver -> sendGameOver(gameOver));
 
-        retrieveGameOver().forEach(gameOver -> sendGameOver(gameOver));
-
-        //log data
-        outPacketLogger.logCharactersState(frameNumber, charactersStateData);
-        deadEntities.forEach(de -> outPacketLogger.logDeadEntity(frameNumber, de));
+        //log state data
+        packetLogger.logPacket(frameNumber, charactersStateData);
+        abilitiesStarted.forEach(as -> packetLogger.logPacket(frameNumber, as));
+        hitsDetected.forEach(hd -> packetLogger.logPacket(frameNumber, hd));
+        projectilesDead.forEach(pd -> packetLogger.logPacket(frameNumber, pd));
+        deadEntities.forEach(de -> packetLogger.logPacket(frameNumber, de));
+        gameOvers.forEach(go -> packetLogger.logPacket(frameNumber, go));
     }
 
 

@@ -1,12 +1,6 @@
 package engine.network;
 
 import engine.network.networkPackets.*;
-import utils.maths.M;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.SocketException;
 
 /**
  * Created by eirik on 21.06.2017.

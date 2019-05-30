@@ -1,28 +1,37 @@
 package engine.network.packet_logging;
 
-import engine.network.networkPackets.AllCharacterStateData;
-import engine.network.networkPackets.CharacterInputData;
-import engine.network.networkPackets.EntityDeadData;
+import engine.network.networkPackets.*;
+import game.CharacterUtils;
+import game.GameUtils;
 import utils.loggers.Logger;
 
-public class PacketLogger {
+import java.util.stream.Collectors;
 
+public class PacketLogger {
 
     private Logger logger;
 
     public PacketLogger(String logname) {
+        String playerNames = String.join("-", GameUtils.PLAYER_NAMES);
+        String playerCharacters = GameUtils.PLAYER_CHARACTERS_ID.stream()
+                .map(charId -> CharacterUtils.CHARACTER_NAMES[charId])
+                .collect(Collectors.joining("-"));
 
-        logger = new Logger(logname, true);
+        String lognameWithPlayerNames = logname + '_' + playerNames +'_'+playerCharacters;
+        logger = new Logger(lognameWithPlayerNames, true);
+
+        logger.println(playerNames +' '+ playerCharacters);
     }
 
-    public void logClientInput(int frame, int clientId, CharacterInputData data) {
-        logger.println(""+frame+' '+clientId+';'+data.serialize());
-    }
-    public void logCharactersState(int frame, AllCharacterStateData data) {
-        logger.println(""+frame+';'+data.serialize());
+    public void close() {
+        logger.close();
     }
 
-    public void logDeadEntity(int frame, EntityDeadData data) {
-        logger.println(""+frame+';'+data.serialize());
+    public void log(String s) {
+        logger.println(s);
+    }
+
+    public void logPacket(int frame, NetworkPacket packet) {
+        logger.println(""+frame +' '+ packet.getPacketId() +' '+ packet.serialize());
     }
 }

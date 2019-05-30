@@ -18,6 +18,8 @@ import game.SysUtils;
 import utils.loggers.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -92,6 +94,14 @@ public class ServerIngame {
     public void start() {
         logger.printh1("start");
 
+        //set characters that players are playing for logging purposes
+        List<Integer> charIds = IntStream.range(0, teams.getTeamCount())
+                .flatMap(t -> IntStream.of(teams.getCharacterIdsOnTeam(t)))
+                .boxed().collect(Collectors.toList());
+        GameUtils.PLAYER_CHARACTERS_ID.clear();
+        GameUtils.PLAYER_CHARACTERS_ID.addAll(charIds);
+
+
         if (displayWindow) {
             logger.println("create window");
             this.window = new Window(0.3f, "Server ingame");
@@ -125,7 +135,6 @@ public class ServerIngame {
 
         logger.println("create server characters");
         CharacterUtils.createServerCharacters(wc, teams, displayWindow);
-
 
         //add a gameData entity
         gameDataEntity = wc.createEntity("game data");

@@ -1,11 +1,6 @@
 import engine.network.*;
-import engine.network.networkPackets.AbilityStartedData;
-import engine.network.networkPackets.AllCharacterStateData;
-import engine.network.networkPackets.CharacterInputData;
-import engine.network.networkPackets.HitDetectedData;
-import org.junit.After;
+import engine.network.networkPackets.*;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import utils.maths.M;
 

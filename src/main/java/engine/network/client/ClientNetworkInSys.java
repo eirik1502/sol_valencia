@@ -12,12 +12,7 @@ import engine.network.networkPackets.*;
 import engine.visualEffect.VisualEffectComp;
 import utils.maths.Vec2;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by eirik on 04.07.2017.

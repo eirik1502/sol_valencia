@@ -1,9 +1,11 @@
-package engine.network;
+package engine.network.networkPackets;
+
+import engine.network.NetworkUtils;
 
 /**
  * Created by eirik on 07.07.2017.
  */
-public class ProjectileDeadData {
+public class ProjectileDeadData implements NetworkPacket{
 
     public static final int BYTES = Integer.BYTES *2;
 
@@ -37,5 +39,15 @@ public class ProjectileDeadData {
 
     public String toString() {
         return "["+getClass().getSimpleName()+": entityOwnerId="+entityOwnerId+" projectileAbilityId="+projectileAbilityId+"]";
+    }
+
+    @Override
+    public int getPacketId() {
+        return NetworkUtils.SERVER_PROJECTILE_DEAD_ID;
+    }
+
+    @Override
+    public String serialize() {
+        return ""+ entityOwnerId + ' ' +projectileAbilityId;
     }
 }

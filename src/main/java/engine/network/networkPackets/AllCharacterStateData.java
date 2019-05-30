@@ -11,9 +11,7 @@ import java.util.stream.Stream;
 /**
  * Created by eirik on 21.06.2017.
  */
-public class AllCharacterStateData {
-
-    public static final int PACKET_ID = NetworkUtils.SERVER_CHARACTER_STATE_ID;
+public class AllCharacterStateData implements NetworkPacket{
 
 //    public static final int BYTES = Integer.BYTES + Float.BYTES*3 * NetworkUtils.CHARACTER_NUMB;
 
@@ -68,9 +66,13 @@ public class AllCharacterStateData {
         return "[AllCharacterStateData: x="+ Arrays.toString(x)+" y="+Arrays.toString(y)+" rotation="+Arrays.toString(rotation)+"]";
     }
 
+    @Override
+    public int getPacketId() {
+        return NetworkUtils.SERVER_CHARACTER_STATE_ID;
+    }
+
     public String serialize() {
         StringBuilder sb = new StringBuilder();
-        sb.append(PACKET_ID).append(' ');
         IntStream.range(0, x.length).forEach(i -> sb.append(x[i]).append(','));
         sb.append(' ');
         IntStream.range(0, y.length).forEach(i -> sb.append(y[i]).append(','));

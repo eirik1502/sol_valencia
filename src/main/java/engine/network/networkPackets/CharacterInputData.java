@@ -6,11 +6,12 @@ import utils.Parse;
 /**
  * Created by eirik on 21.06.2017.
  */
-public class CharacterInputData {
+public class CharacterInputData implements NetworkPacket{
 
-    public static final int PACKET_ID = NetworkUtils.CLIENT_CHARACTER_INPUT;
     public static final int BYTES = Float.BYTES*2 + 1 * 7; //a boolean is sent as one byte with the dataStreams
 
+
+    public int clientId = -1;
 
     private boolean moveLeft, moveRight, moveUp, moveDown;
 
@@ -123,9 +124,14 @@ public class CharacterInputData {
         return "[CharacterInputData: moveLeft="+moveLeft+" moveRight="+moveRight+" moveUp="+moveUp+" moveDown="+moveDown+" action1="+action1+" action2="+action2+" aimX="+aimX+" aimY="+aimY+"]";
     }
 
+    @Override
+    public int getPacketId() {
+        return NetworkUtils.CLIENT_CHARACTER_INPUT;
+    }
+
     public String serialize() {
         return ""
-                +PACKET_ID + ' '
+                +clientId + ' '
                 +Parse.boolToBinChar(moveLeft)+' '
                 +Parse.boolToBinChar(moveRight)+' '
                 +Parse.boolToBinChar(moveUp)+' '

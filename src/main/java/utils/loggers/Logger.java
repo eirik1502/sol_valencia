@@ -26,35 +26,38 @@ public class Logger {
     public Logger(String logname, boolean uniquePerRun) {
         String logDirName = "./logs/";
 
+        // retrieve the path and name parts of the logname given
         int dirEnd = logname.lastIndexOf('/');
         if (dirEnd != -1) {
             logDirName += logname.substring(0, dirEnd+1);
             logname = logname.substring(dirEnd+1);
         }
 
+        // create the path to the log if it doesnt exist
         File logDir = new File(logDirName);
         if (!logDir.exists())
             logDir.mkdir();
 
-        String filepath = logDirName + logname;
+        // get the timedate tag
         String timeext = "";
-
         if (uniquePerRun) {
             timeext = getCurrentDateTimeFileext();
         }
 
-        //if the file exists, add a number to it
+        // check if the name is unique, else adda  number to its name
         int i = 0;
         File file;
         do {
-            file = new File(filepath + (i == 0 ? "" : i) + timeext + fileExtension);
-            ++i;
+            String uniqueTag = i++ == 0 ? "" : "_"+i;
+            String filename = logDirName + timeext + uniqueTag + '_' + logname + fileExtension;
+            file = new File(filename);
         }
         while(uniquePerRun && file.exists());
 
         pw = FileUtils.createPrintFile(file);
 
-        println("Log created at: " + getCurrentDateTime());
+        // print the timedate to the start of the log
+        println(timeext);
     }
 
     public void printh1(String s) {
@@ -80,12 +83,12 @@ public class Logger {
     }
 
     private String getCurrentDateTime() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yy-HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
     }
     private String getCurrentDateTimeFileext() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("_yyMMdd_HHmmss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyMMdd-HHmmss");
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
     }

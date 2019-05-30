@@ -1,9 +1,11 @@
 package engine.network.networkPackets;
 
+import engine.network.NetworkUtils;
+
 /**
  * Created by eirik on 07.07.2017.
  */
-public class HitDetectedData {
+public class HitDetectedData implements NetworkPacket{
 
     public static final int BYTES = Integer.BYTES * 2 + Float.BYTES;
 
@@ -49,5 +51,18 @@ public class HitDetectedData {
 
     public String toString() {
         return "["+getClass().getSimpleName()+": entityDamager="+entityDamager+" entityDamageable="+entityDamageable+" totalDamageTaken="+damageTaken+"]";
+    }
+
+    @Override
+    public int getPacketId() {
+        return NetworkUtils.SERVER_HIT_DETECTED_ID;
+    }
+
+    @Override
+    public String serialize() {
+        return ""
+                + entityDamager + ' '
+                + entityDamageable + ' '
+                + damageTaken;
     }
 }

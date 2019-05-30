@@ -1,9 +1,11 @@
 package engine.network.networkPackets;
 
+import engine.network.NetworkUtils;
+
 /**
  * Created by eirik on 07.07.2017.
  */
-public class AbilityStartedData {
+public class AbilityStartedData implements NetworkPacket{
 
     public static final int BYTES = Integer.BYTES *2;
 
@@ -40,5 +42,15 @@ public class AbilityStartedData {
 
     public String toString() {
         return "[AbilityStartedData: entityId="+entityId+" abilityId="+abilityId+"]";
+    }
+
+    @Override
+    public int getPacketId() {
+        return NetworkUtils.SERVER_ABILITY_STARTED_ID;
+    }
+
+    @Override
+    public String serialize() {
+        return ""+entityId +' '+ abilityId;
     }
 }

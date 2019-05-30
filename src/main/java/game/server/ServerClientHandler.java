@@ -1,10 +1,7 @@
 package game.server;
 
 import engine.network.*;
-import engine.network.networkPackets.AbilityStartedData;
-import engine.network.networkPackets.AllCharacterStateData;
-import engine.network.networkPackets.CharacterInputData;
-import engine.network.networkPackets.HitDetectedData;
+import engine.network.networkPackets.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

@@ -38,6 +38,7 @@ import utils.maths.Vec2;
 import utils.maths.Vec4;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,6 +46,9 @@ import java.util.List;
  * Created by eirik on 22.06.2017.
  */
 public class GameUtils {
+
+    public static List<String> PLAYER_NAMES = new ArrayList<>();
+    public static List<Integer> PLAYER_CHARACTERS_ID = new ArrayList<>();
 
     public static Logger logger = new Logger();
 
